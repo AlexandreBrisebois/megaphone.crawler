@@ -7,18 +7,6 @@ namespace Megaphone.Crawler.Middleware
     {
         public static IFunctionsWorkerApplicationBuilder UseSampleMiddleware(this IFunctionsWorkerApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<SampleMiddleware>();
-
-            builder.Use(next =>
-            {
-                return context =>
-                {
-                    var middleware = context.InstanceServices.GetRequiredService<SampleMiddleware>();
-
-                    return middleware.Invoke(context, next);
-                };
-            });
-
             return builder;
         }
     }

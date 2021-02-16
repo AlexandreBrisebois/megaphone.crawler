@@ -10,6 +10,7 @@ using Megaphone.Crawler.Core.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using System.Net;
 using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker.Pipeline;
 
 namespace megaphone.crawler
 {
@@ -18,7 +19,7 @@ namespace megaphone.crawler
         static WebResourceCrawler crawler = new();
 
         [FunctionName("Crawl")]
-        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req, ILogger log)
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req, FunctionExecutionContext executionContext)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var commandMessage = JsonConvert.DeserializeObject<CommandMessage>(requestBody);
