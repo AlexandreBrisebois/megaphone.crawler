@@ -16,7 +16,7 @@ namespace megaphone.crawler.tests
         public async void OkRequestTest(object body, string expectedType)
         {
             var request = TestFactory.CreateHttpRequest(body);
-            var response = await CrawlerFunctionApp.Run(request, logger);
+            var response = await CrawlerFunction.Run(request, logger);
 
             Assert.IsType<OkObjectResult>(response);
            
@@ -32,7 +32,7 @@ namespace megaphone.crawler.tests
         public async void BadRequestTest(object body)
         {
             var request = TestFactory.CreateHttpRequest(body);
-            var response = await CrawlerFunctionApp.Run(request, logger);
+            var response = await CrawlerFunction.Run(request, logger);
 
             Assert.IsType<BadRequestObjectResult>(response);
         }
