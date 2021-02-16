@@ -1,5 +1,6 @@
 using Megaphone.Crawler.Core.Models;
-using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net;
 using Xunit;
 
 namespace megaphone.crawler.tests
@@ -7,32 +8,30 @@ namespace megaphone.crawler.tests
     public class FunctionsTests
     {
 
-        //public static readonly GoodRequestData goodRequestData = new();
+        public static readonly GoodRequestData goodRequestData = new();
 
-        //[Theory]
-        //[MemberData(nameof(goodRequestData))]
-        //public async void OkRequestTest(object body, string expectedType)
-        //{
-        //    var request = TestFactory.CreateHttpRequest(body);
-        //    var response = await CrawlerFunction.Run(request);
+        [Theory]
+        [MemberData(nameof(goodRequestData))]
+        public async void OkRequestTest(object body, string expectedType)
+        {
+            var request = RequestFactory.CreatePostHttpRequest(body);
+            var response = await CrawlerFunction.Run(request);
 
-        //    Assert.IsType<OkObjectResult>(response);
-           
-        //    OkObjectResult result = response as OkObjectResult;
+            var resource = JsonConvert.DeserializeObject<Resource>(response.Body);
+    
+            Assert.Equal(expectedType, resource.Type);
+        }
 
-        //    Assert.Equal(expectedType, ((Resource)result.Value).Type);
-        //}
+        public static readonly BadRequestData badRequestData = new();
 
-        //public static readonly BadRequestData badRequestData = new();
+        [Theory]
+        [MemberData(nameof(badRequestData))]
+        public async void BadRequestTest(object body)
+        {
+            var request = RequestFactory.CreatePostHttpRequest(body);
+            var response = await CrawlerFunction.Run(request);
 
-        //[Theory]
-        //[MemberData(nameof(badRequestData))]
-        //public async void BadRequestTest(object body)
-        //{
-        //    var request = TestFactory.CreateHttpRequest(body);
-        //    var response = await CrawlerFunction.Run(request, logger);
-
-        //    Assert.IsType<BadRequestObjectResult>(response);
-        //}
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

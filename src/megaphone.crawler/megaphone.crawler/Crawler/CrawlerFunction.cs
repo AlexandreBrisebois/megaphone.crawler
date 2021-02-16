@@ -1,16 +1,13 @@
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Megaphone.Standard.Messages;
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using System.Net;
 using System.Collections.Generic;
-using Microsoft.Azure.Functions.Worker.Pipeline;
+using System.Text.Json;
 
 namespace megaphone.crawler
 {
@@ -19,10 +16,10 @@ namespace megaphone.crawler
         static WebResourceCrawler crawler = new();
 
         [FunctionName("Crawl")]
-        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req, FunctionExecutionContext executionContext)
+        public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var commandMessage = JsonConvert.DeserializeObject<CommandMessage>(requestBody);
+            string requestBody = req.Body;
+            var commandMessage = JsonSerializer.Deserialize<CommandMessage>(requestBody);
 
             var headers = new Dictionary<string, string>();
             headers.Add("Content", "Content - Type: application / json; charset = utf - 8");
@@ -32,7 +29,7 @@ namespace megaphone.crawler
                 return new HttpResponseData(HttpStatusCode.BadRequest)
                 {
                      Headers = headers,
-                     Body = JsonConvert.SerializeObject(commandMessage)
+                     Body = JsonSerializer.Serialize(commandMessage)
                 };
             }
 
@@ -41,12 +38,10 @@ namespace megaphone.crawler
             var response = new HttpResponseData(HttpStatusCode.OK)
             {
                 Headers = headers,
-                Body = JsonConvert.SerializeObject(resource)
+                Body = JsonSerializer.Serialize(resource)
             };
 
             return response;
-
-
         }
     }
 }
