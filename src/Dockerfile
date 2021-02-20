@@ -12,7 +12,7 @@ WORKDIR "/src/megaphone.standard"
 RUN dotnet build "megaphone.standard.csproj" -c Release --no-restore
 WORKDIR "/src/megaphone.standard.tests"
 RUN dotnet build "megaphone.standard.tests.csproj" -c Release --no-restore
-RUN dotnet test "megaphone.standard.tests.csproj" -c Release --no-build --logger trx --results-directory "../..TestResults/megaphone.standard.tests"
+RUN dotnet test "megaphone.standard.tests.csproj" -c Release --no-build --logger trx --results-directory "../../TestResults/megaphone.standard.tests"
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
 RUN dotnet build "megaphone.crawler.core.csproj" -c Release --no-restore
