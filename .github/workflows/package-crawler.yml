@@ -41,4 +41,4 @@ jobs:
         context: .
         push: true
         tags: crawler:latest, crawler:1.0.0-preview
-        file: ./src/megaphone.crawler/Dockerfile
+        file: ./src/Dockerfile
