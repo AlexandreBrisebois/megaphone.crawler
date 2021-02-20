@@ -1,6 +1,12 @@
 name: Package Crawler
 
 on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
   push:
     paths:
       - 'src'
