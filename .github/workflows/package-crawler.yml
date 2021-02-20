@@ -1,0 +1,23 @@
+name: Package Crawler
+
+on:
+  push:
+    paths:
+      - 'src'
+
+jobs:
+  build:
+    name: Package
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.7.2
+      with:
+        dotnet-version: 3.1.101
+        source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - name: Install dependencies
+      run: dotnet restore ./src/megaphone.crawler.sln
