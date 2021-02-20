@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31004.235
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.crawler", "megaphone.crawler\megaphone.crawler.csproj", "{2F10B5D5-D301-4285-9177-9AE745522C3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.crawler", "megaphone.crawler\megaphone.crawler.csproj", "{2F10B5D5-D301-4285-9177-9AE745522C3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.crawler.tests", "megaphone.crawler.tests\megaphone.crawler.tests.csproj", "{FEF7B3C8-C1C8-4345-A04B-BC8AC1687051}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.crawler.tests", "megaphone.crawler.tests\megaphone.crawler.tests.csproj", "{FEF7B3C8-C1C8-4345-A04B-BC8AC1687051}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.standard", "megaphone.standard\megaphone.standard.csproj", "{C546120B-9F52-49CD-BA86-AE6EF50CCE81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.standard", "megaphone.standard\megaphone.standard.csproj", "{C546120B-9F52-49CD-BA86-AE6EF50CCE81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.standard.tests", "megaphone.standard.tests\megaphone.standard.tests.csproj", "{56F1F462-898A-4A69-8E89-95294E5D122B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.standard.tests", "megaphone.standard.tests\megaphone.standard.tests.csproj", "{56F1F462-898A-4A69-8E89-95294E5D122B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.crawler.core", "megaphone.crawler.core\megaphone.crawler.core.csproj", "{23A8D268-43BA-4A29-9B68-0B8E0D96A13A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.crawler.core", "megaphone.crawler.core\megaphone.crawler.core.csproj", "{23A8D268-43BA-4A29-9B68-0B8E0D96A13A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megaphone.crawler.core.tests", "megaphone.crawler.core.tests\megaphone.crawler.core.tests.csproj", "{521FDA86-E5F1-4AA1-9566-86F0A4013F6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "megaphone.crawler.core.tests", "megaphone.crawler.core.tests\megaphone.crawler.core.tests.csproj", "{521FDA86-E5F1-4AA1-9566-86F0A4013F6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

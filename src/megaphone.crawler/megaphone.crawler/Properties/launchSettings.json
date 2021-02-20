@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "megaphone.crawler": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
