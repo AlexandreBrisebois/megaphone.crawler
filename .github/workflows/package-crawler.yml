@@ -9,7 +9,7 @@ on:
         default: 'warning'
   push:
     paths:
-      - 'src'
+      - 'src/**'
 
 jobs:
   build:
