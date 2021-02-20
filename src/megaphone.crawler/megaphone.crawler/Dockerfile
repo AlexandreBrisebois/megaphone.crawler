@@ -12,23 +12,23 @@ WORKDIR "/src/megaphone.standard"
 RUN dotnet build "megaphone.standard.csproj" -c Release --no-restore
 WORKDIR "/src/megaphone.standard.tests"
 RUN dotnet build "megaphone.standard.tests.csproj" -c Release --no-restore
-RUN dotnet test "megaphone.standard.tests.csproj" -c Release --no-restore
+RUN dotnet test "megaphone.standard.tests.csproj" -c Release --no-build
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
 RUN dotnet build "megaphone.crawler.core.csproj" -c Release --no-restore
 WORKDIR "/src/megaphone.crawler.core.tests"
 RUN dotnet build "megaphone.crawler.core.tests.csproj" -c Release --no-restore
-RUN dotnet test "megaphone.crawler.core.tests.csproj" -c Release --no-restore
+RUN dotnet test "megaphone.crawler.core.tests.csproj" -c Release --no-build
 # megaphone.crawler
 WORKDIR "/src/megaphone.crawler"
 RUN dotnet build "megaphone.crawler.csproj" -c Release --no-restore
 WORKDIR "/src/megaphone.crawler.tests"
 RUN dotnet build "megaphone.crawler.tests.csproj" -c Release --no-restore
-RUN dotnet test "megaphone.crawler.tests.csproj" -c Release --no-restore
+RUN dotnet test "megaphone.crawler.tests.csproj" -c Release --no-build
 
 FROM build AS publish
 WORKDIR "/src/megaphone.crawler"
-RUN dotnet publish "megaphone.crawler.csproj" -c Release --no-restore -o /app/publish
+RUN dotnet publish "megaphone.crawler.csproj" -c Release --no-build -o /app/publish
 
 FROM base AS final
 WORKDIR /app
