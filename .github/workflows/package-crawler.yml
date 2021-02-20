@@ -31,5 +31,9 @@ jobs:
       with:
         context: .
         push: true
-        tags: crawler:latest, crawler:1.0.0-preview
         file: ./src/Dockerfile
+        tags: |
+            user/app:latest
+            user/app:1.0.0
+            ${{ secrets.REGISTRY_URL }}/crawler:latest
+            ${{ secrets.REGISTRY_URL }}/crawler:1.0.0-preview
