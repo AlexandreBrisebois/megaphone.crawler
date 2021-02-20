@@ -34,4 +34,4 @@ jobs:
         file: ./src/Dockerfile
         tags: |
             ${{ secrets.REGISTRY_URL }}/crawler:latest
-            ${{ secrets.REGISTRY_URL }}/crawler:1.0.${{ GITHUB_RUN_NUMBER }}-preview
+            ${{ secrets.REGISTRY_URL }}/crawler:1.0.$GITHUB_RUN_NUMBER-preview
