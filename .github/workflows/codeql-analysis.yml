@@ -65,7 +65,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-        dotnet build ./src/megaphone.crawler/megaphone.crawler.sln
+        dotnet build ./src/megaphone.crawler.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
