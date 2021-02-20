@@ -8,6 +8,7 @@ using Microsoft.Azure.Functions.Worker;
 using System.Net;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text;
 
 namespace megaphone.crawler
 {
@@ -18,7 +19,8 @@ namespace megaphone.crawler
         [FunctionName("Crawl")]
         public static async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
-            string requestBody = req.Body;
+            string requestBody = Encoding.UTF8.GetString(req.Body.Value.Span);
+
             var commandMessage = JsonSerializer.Deserialize<CommandMessage>(requestBody);
 
             var headers = new Dictionary<string, string>();

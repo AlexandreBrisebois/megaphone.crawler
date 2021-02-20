@@ -14,7 +14,7 @@ namespace megaphone.crawler.tests
         [MemberData(nameof(goodRequestData))]
         public async void OkRequestTest(object body, string expectedType)
         {
-            var request = RequestFactory.CreatePostHttpRequest(body);
+            var request = RequestBuilder.CreatePostHttpRequest(body);
             var response = await CrawlerFunction.Run(request);
 
             var resource = JsonConvert.DeserializeObject<Resource>(response.Body);
@@ -28,7 +28,7 @@ namespace megaphone.crawler.tests
         [MemberData(nameof(badRequestData))]
         public async void BadRequestTest(object body)
         {
-            var request = RequestFactory.CreatePostHttpRequest(body);
+            var request = RequestBuilder.CreatePostHttpRequest(body);
             var response = await CrawlerFunction.Run(request);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
