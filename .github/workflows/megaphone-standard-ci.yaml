@@ -26,17 +26,7 @@ jobs:
         source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - name: megaphone.standard restore
-      run: dotnet restore "./src/megaphone.standard/megaphone.standard.csproj"
-    - name: megaphone.standard build
-      run: dotnet build "./src/megaphone.standard/megaphone.standard.csproj" -c Debug --no-restore
-    - name: megaphone.standard.tests restore
-      run: dotnet restore "./src/megaphone.standard.tests/megaphone.standard.tests.csproj"
-    - name: megaphone.standard.tests build
-      run: dotnet build "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" -c Debug --no-restore  
-    - name: megaphone.standard.tests test
-      run: dotnet test "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" --no-build --no-restore --verbosity normal
-    - name: reporting unit tests for megaphone.standard
+    - name: build and test megaphone.standard
       uses: zyborg/dotnet-tests-report@v1
       with:
           project_path: "./src/megaphone.standard.tests/"
@@ -44,6 +34,6 @@ jobs:
           report_name: "Megaphone Standard Tests Results"
           report_title: "Megaphone Standard Tests Results"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          gist_name: megaphone-standard-tests.md
+          gist_name: megaphone-standard-test-results.md
           gist_badge_label: 'Megaphone Standard %Counters_passed%/%Counters_total%'
           gist_token: ${{ secrets.GIST_TOKEN }}
