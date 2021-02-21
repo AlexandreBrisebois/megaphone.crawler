@@ -36,3 +36,13 @@ jobs:
       run: dotnet build "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" -c Debug --no-restore  
     - name: megaphone.standard.tests test
       run: dotnet test "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" --no-build --no-restore --verbosity normal
+    - name: reporting unit tests for megaphone.standard
+      uses: zyborg/dotnet-tests-report@v1
+      with:
+          project_path: "./src/megaphone.standard.tests/"
+          report_name: megaphone-standard-tests
+          report_title: Megaphone Standard Tests
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          gist_name: megaphone-standard-tests.md
+          gist_badge_label: 'Megaphone Standard %Counters_passed%/%Counters_total%'
+          gist_token: ${{ secrets.GIST_TOKEN }}
