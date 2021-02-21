@@ -1,9 +1,9 @@
 ﻿using Megaphone.Standard.Messages;
 using Xunit;
 
-namespace megaphone.crawler.tests
+namespace Megaphone.Crawler.Tests.Data
 {
-    public class GoodRequestData : TheoryData<CommandMessage,string>
+    public class GoodRequestData : TheoryData<CommandMessage, string>
     {
         public GoodRequestData()
         {

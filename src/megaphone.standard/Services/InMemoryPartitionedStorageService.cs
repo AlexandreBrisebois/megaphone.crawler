@@ -6,7 +6,7 @@ namespace Megaphone.Standard.Services
 {
     public class InMemoryPartitionedStorageService<TContent> : IPartionedStorageService<TContent>
     {
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, TContent>> storage = new ConcurrentDictionary<string, ConcurrentDictionary<string, TContent>>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, TContent>> storage = new();
 
         public Task<TContent> GetAsync(string partitionKey, string contentKey)
         {
@@ -14,10 +14,12 @@ namespace Megaphone.Standard.Services
 
             storage.TryGetValue(partitionKey, out var partition);
 
-            if (partition.TryGetValue(contentKey, out var value))
-            {
-                return Task.FromResult(value);
-            }
+            if (partition != null)
+                if (partition.TryGetValue(contentKey, out var value))
+                {
+                    return Task.FromResult(value);
+                }
+
             throw new KeyNotFoundException(contentKey);
         }
 
@@ -26,8 +28,9 @@ namespace Megaphone.Standard.Services
             storage.TryAdd(partitionKey, new ConcurrentDictionary<string, TContent>());
 
             storage.TryGetValue(partitionKey, out var partition);
-
-            partition.AddOrUpdate(contentKey, content, (s, c) => content);
+            
+            if (partition != null)
+                partition.AddOrUpdate(contentKey, content, (s, c) => content);
 
             return Task.CompletedTask;
         }

@@ -1,7 +1,7 @@
 ﻿using Megaphone.Standard.Messages;
 using Xunit;
 
-namespace megaphone.crawler.tests
+namespace Megaphone.Crawler.Tests.Data
 {
     public class BadRequestData : TheoryData<CommandMessage>
     {

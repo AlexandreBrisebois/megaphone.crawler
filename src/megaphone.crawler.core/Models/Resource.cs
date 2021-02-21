@@ -16,11 +16,11 @@ namespace Megaphone.Crawler.Core.Models
         public int StatusCode { get; set; }
         public DateTimeOffset Created { get; init; } = DateTimeOffset.UtcNow;
         public bool IsActive { get; set; }
-        public string Type { get; set; }
-        public string Description { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public Uri Self { get; init; }
         public DateTimeOffset Published { get; set; }
-        public string Cache { get; set; }
+        public string Cache { get; set; } = string.Empty;
         public List<Resource> Resources { get; init; } = new List<Resource>();
     }
 }

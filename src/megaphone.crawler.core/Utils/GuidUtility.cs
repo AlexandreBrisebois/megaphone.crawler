@@ -51,7 +51,7 @@ namespace Megaphone.Crawler.Core.Utils
 
             // comput the hash of the name space ID concatenated with the name (step 4)
             byte[] hash;
-            using (HashAlgorithm algorithm = version == 3 ? MD5.Create() : SHA1.Create())
+            using (HashAlgorithm algorithm = version == 3 ? (HashAlgorithm)MD5.Create() : (HashAlgorithm)SHA1.Create())
             {
                 algorithm.TransformBlock(namespaceBytes, 0, namespaceBytes.Length, null, 0);
                 algorithm.TransformFinalBlock(nameBytes, 0, nameBytes.Length);
@@ -79,17 +79,17 @@ namespace Megaphone.Crawler.Core.Utils
         /// <summary>
         /// The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid DnsNamespace = new Guid("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+        public static readonly Guid DnsNamespace = new("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
 
         /// <summary>
         /// The namespace for URLs (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid UrlNamespace = new Guid("6ba7b811-9dad-11d1-80b4-00c04fd430c8");
+        public static readonly Guid UrlNamespace = new("6ba7b811-9dad-11d1-80b4-00c04fd430c8");
 
         /// <summary>
         /// The namespace for ISO OIDs (from RFC 4122, Appendix C).
         /// </summary>
-        public static readonly Guid IsoOidNamespace = new Guid("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
+        public static readonly Guid IsoOidNamespace = new("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
 
         // Converts a GUID (expressed as a byte array) to/from network order (MSB-first).
         internal static void SwapByteOrder(byte[] guid)
