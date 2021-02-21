@@ -1,0 +1,38 @@
+name: "Megaphone Standard CI"
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+  push:
+    paths:
+      - 'src/megaphone.standard/**'
+      - 'src/megaphone.standard.tests/**'
+
+jobs:
+   build:
+    name: Megaphone Standard CI
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.7.2
+      with:
+        dotnet-version: 3.1.x
+        source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - name: megaphone.standard restore
+      run: dotnet restore "./src/megaphone.standard/megaphone.standard.csproj"
+    - name: megaphone.standard build
+      run: RUN dotnet build "./src/megaphone.standard/megaphone.standard.csproj" -c Debug --no-restore
+    - name: megaphone.standard.tests restore
+      run: dotnet restore "./src/megaphone.standard.tests/megaphone.standard.tests.csproj"
+    - name: megaphone.standard.tests build
+      run: dotnet build "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" -c Debug --no-restore  
+    - name: megaphone.standard.tests test
+      run: dotnet test "./src/megaphone.standard.tests/megaphone.standard.tests.csproj" --no-build --no-restore --verbosity normal
