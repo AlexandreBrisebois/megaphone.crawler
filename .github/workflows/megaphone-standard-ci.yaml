@@ -40,8 +40,8 @@ jobs:
       uses: zyborg/dotnet-tests-report@v1
       with:
           project_path: "./src/megaphone.standard.tests/"
-          report_name: megaphone-standard-tests
-          report_title: Megaphone Standard Tests
+          report_name: "Megaphone Standard Tests Results"
+          report_title: "Megaphone Standard Tests Results"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           gist_name: megaphone-standard-tests.md
           gist_badge_label: 'Megaphone Standard %Counters_passed%/%Counters_total%'
