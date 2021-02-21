@@ -44,6 +44,6 @@ jobs:
           report_name: "Megaphone Crawler Tests Results"
           report_title: "Megaphone Crawler Tests Results"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          gist_name: megaphone-crawler-test-results.md
+          gist_name: echo 'megaphone-crawler-test-results${{ env.GITHUB_RUN_NUMBER }}.md'
           gist_badge_label: 'Megaphone Crawler %Counters_passed%/%Counters_total%'
           gist_token: ${{ secrets.GIST_TOKEN }}
