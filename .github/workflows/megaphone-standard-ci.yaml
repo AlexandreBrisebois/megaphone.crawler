@@ -36,8 +36,8 @@ jobs:
           project_path: "./src/megaphone.standard.tests/"
           set_check_status_from_test_outcome: true
           report_name: "Megaphone Standard Tests Results"
-          report_title: "Megaphone Standard Tests Results"
+          report_title: ${{ format('Standard CI ({0})", github.run_number) }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          gist_name: megaphone-standard-test-results.md
+          gist_name: ${{ format(' megaphone-standard-test-results-{0}.md', github.run_number) }}
           gist_badge_label: 'Megaphone Standard %Counters_passed%/%Counters_total%'
           gist_token: ${{ secrets.GIST_TOKEN }}

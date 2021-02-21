@@ -42,8 +42,8 @@ jobs:
           project_path: "./src/megaphone.crawler.tests/"
           set_check_status_from_test_outcome: true
           report_name: "Megaphone Crawler Tests Results"
-          report_title: ${{ format('Crawler CI \# {0}', github.run_number) }}
+          report_title: ${{ format('Crawler CI ({0})', github.run_number) }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          gist_name: ${{ format('"megaphone-crawler-test-results-{0}.md', github.run_number) }}
+          gist_name: ${{ format('megaphone-crawler-test-results-{0}.md', github.run_number) }}
           gist_badge_label: 'Megaphone Crawler %Counters_passed%/%Counters_total%'
           gist_token: ${{ secrets.GIST_TOKEN }}

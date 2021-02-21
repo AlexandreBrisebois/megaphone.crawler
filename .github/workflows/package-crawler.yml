@@ -32,5 +32,5 @@ jobs:
         push: true
         file: ./src/Dockerfile
         tags: |
-            ${{ secrets.REGISTRY_URL }}/crawler:latest
-            ${{ secrets.REGISTRY_URL }}/crawler:1.0.0-preview
+            ${{ format('{0}/crawler:latest',secrets.REGISTRY_URL) }}
+            ${{ format('{0}/crawler:1.0.0-preview-{1}',secrets.REGISTRY_URL, github.run_number) }}
