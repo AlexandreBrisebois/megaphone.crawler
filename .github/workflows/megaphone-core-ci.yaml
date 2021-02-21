@@ -1,6 +1,11 @@
-name: "Megaphone Standard CI"
+name: "Megaphone Crawler Core CI"
 
 on:
+  workflow_run:
+    workflows: ["Megaphone Standard CI"]
+    branches: [main]
+    types: 
+      - completed
   workflow_dispatch:
     inputs:
       logLevel:
@@ -9,16 +14,16 @@ on:
         default: 'warning'
   push:
     paths:
-      - 'src/megaphone.standard/**'
-      - 'src/megaphone.standard.tests/**'
+      - 'src/megaphone.crawler.core/**'
+      - 'src/megaphone.crawler.core.tests/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'src/megaphone.standard/**'
-      - 'src/megaphone.standard.tests/**'
+      - 'src/megaphone.crawler.core/**'
+      - 'src/megaphone.crawler.core.tests/**'
 jobs:
    build:
-    name: Megaphone Standard CI
+    name: Megaphone Core CI
     runs-on: ubuntu-latest
  
     steps:
@@ -30,14 +35,14 @@ jobs:
         source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    - name: build and test megaphone.standard
+    - name: build and test megaphone.crawler.core
       uses: zyborg/dotnet-tests-report@v1
       with:
-          project_path: "./src/megaphone.standard.tests/"
+          project_path: "./src/megaphone.crawler.core.tests/"
           set_check_status_from_test_outcome: true
-          report_name: "Megaphone Standard Tests Results"
-          report_title: "Megaphone Standard Tests Results"
+          report_name: "Megaphone Crawler Core Tests Results"
+          report_title: "Megaphone Crawler Core Tests Results"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          gist_name: megaphone-standard-test-results.md
-          gist_badge_label: 'Megaphone Standard %Counters_passed%/%Counters_total%'
+          gist_name: megaphone-crawler-core-test-results.md
+          gist_badge_label: 'Megaphone Crawler Core %Counters_passed%/%Counters_total%'
           gist_token: ${{ secrets.GIST_TOKEN }}
