@@ -20,11 +20,11 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.25" />
 		<PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.25" />
+    <PackageReference Include="Megaphone.Standard" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\megaphone.crawler\megaphone.crawler.csproj" />
-		<ProjectReference Include="..\megaphone.standard\megaphone.standard.csproj" />
 	</ItemGroup>
 
 </Project>

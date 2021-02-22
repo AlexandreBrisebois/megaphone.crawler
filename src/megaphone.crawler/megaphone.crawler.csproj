@@ -10,13 +10,13 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 	<ItemGroup>
+    <PackageReference Include="Megaphone.Standard" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\megaphone.crawler.core\megaphone.crawler.core.csproj" />
-		<ProjectReference Include="..\megaphone.standard\megaphone.standard.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="host.json">

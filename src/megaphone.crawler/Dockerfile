@@ -7,7 +7,6 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["megaphone.crawler/megaphone.crawler.csproj", "megaphone.crawler/"]
-COPY ["megaphone.standard/megaphone.standard.csproj", "megaphone.standard/"]
 COPY ["megaphone.crawler.core/megaphone.crawler.core.csproj", "megaphone.crawler.core/"]
 RUN dotnet restore "megaphone.crawler/megaphone.crawler.csproj"
 COPY . .

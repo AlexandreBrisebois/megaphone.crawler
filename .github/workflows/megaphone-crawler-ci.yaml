@@ -30,7 +30,7 @@ jobs:
         dotnet-version: 3.1.x
         source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: build and test megaphone.crawler
       uses: zyborg/dotnet-tests-report@v1
       with:
