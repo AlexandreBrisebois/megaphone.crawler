@@ -8,7 +8,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 COPY . .
 WORKDIR /src
-RUN sed -i "s|</configuration>|<packageSourceCredentials><GitHub><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"${PAT}\" /></GitHub></packageSourceCredentials></configuration>|" nuget.config
+RUN dotnet nuget add source https://nuget.pkg.github.com/AlexandreBrisebois/index.json --name github --username ${USER} --password ${PAT} --store-password-in-clear-text
 RUN dotnet restore --configfile "./nuget.config" "./megaphone.crawler.sln"
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
