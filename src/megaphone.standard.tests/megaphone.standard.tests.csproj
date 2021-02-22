@@ -5,8 +5,8 @@
 		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
-		<AssemblyName>Megaphone.Crawler.Core.Tests</AssemblyName>
-		<RootNamespace>Megaphone.Crawler.Core.Tests</RootNamespace>
+		<AssemblyName>Megaphone.Standard.Tests</AssemblyName>
+		<RootNamespace>Megaphone.Standard.Tests</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,10 +21,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\megaphone.crawler.core\megaphone.crawler.core.csproj" />
 	</ItemGroup>
 
 </Project>
