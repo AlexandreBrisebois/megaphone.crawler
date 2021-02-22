@@ -27,22 +27,14 @@ jobs:
         registry: ${{ secrets.REGISTRY_URL }}
         username: ${{ secrets.AZURE_CLIENT_ID }}
         password: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.7.2
-      with:
-        dotnet-version: 3.1.x
-        source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Build and push
       uses: docker/build-push-action@v2
       with:
         context: .
         build-args: |
-            ${{ format('USER={0}', secrets.GIT_HUB_USER ) }}
-            ${{ format('PAT={0}', secrets.GIT_HUB_PAT ) }}
+            ${{ format('USER={0}', secrets.GIT_HUB_USER) }}
+            ${{ format('PAT={0}', secrets.GIT_HUB_PATcd) }}
         push: true
         file: ./src/Dockerfile
         tags: |
