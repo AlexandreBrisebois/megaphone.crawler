@@ -27,12 +27,13 @@ jobs:
         registry: ${{ secrets.REGISTRY_URL }}
         username: ${{ secrets.AZURE_CLIENT_ID }}
         password: ${{ secrets.AZURE_CLIENT_SECRET }}
-        
+
     - name: Build and push
       uses: docker/build-push-action@v2
       with:
         context: .
-        build-args: ${{ format('--build-arg PAT={0}', secrets.GITHUB_TOKEN ) }}
+        build-args: |
+            ${{ format('PAT={0}', secrets.GITHUB_TOKEN ) }}
         push: true
         file: ./src/Dockerfile
         tags: |
