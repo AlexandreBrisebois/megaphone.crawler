@@ -2,6 +2,7 @@
 using Megaphone.Crawler.Core.Models;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,7 +16,8 @@ namespace megaphone.crawler.core.tests
         [MemberData(nameof(data))]
         public async Task CrawlUri(Uri uri, Resource expectedResource)
         {
-            WebResourceCrawler crawler = new();
+            HttpClient httpClient = new();
+            WebResourceCrawler crawler = new(httpClient);
             var resource = await crawler.GetResourceAsync(uri);
 
             Assert.IsType<Resource>(resource);

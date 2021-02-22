@@ -22,5 +22,7 @@ namespace Megaphone.Crawler.Core.Models
         public DateTimeOffset Published { get; set; }
         public string Cache { get; set; } = string.Empty;
         public List<Resource> Resources { get; init; } = new List<Resource>();
+
+        public static Resource Empty = new(string.Empty,new Uri("http://localhost"));
     }
 }
