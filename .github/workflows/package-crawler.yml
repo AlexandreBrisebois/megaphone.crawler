@@ -38,7 +38,7 @@ jobs:
       run: dotnet test "./src/megaphone.crawler.tests/megaphone.crawler.tests.csproj" -c Release --no-build
    
     - name: package - megaphone.crawler
-      run: dotnet publish "./src/megaphone.crawler/megaphone.crawler.csproj" -c Release --no-build -o "./src/app/publish"
+      run: dotnet publish "./src/megaphone.crawler/megaphone.crawler.csproj" -c Release --no-build"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
