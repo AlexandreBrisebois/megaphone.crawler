@@ -15,10 +15,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "src/megaphone.standard/"
+    directory: "src/megaphone.crawler/"
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "src/megaphone.standard.tests/"
+    directory: "src/megaphone.crawler.tests/"
     schedule:
       interval: "daily"
