@@ -16,6 +16,7 @@ on:
     paths:
       - 'src/megaphone.standard/**'
       - 'src/megaphone.standard.tests/**'
+      
 jobs:
    build:
     name: Megaphone Standard CI

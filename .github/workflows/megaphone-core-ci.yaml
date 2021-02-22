@@ -1,11 +1,6 @@
 name: "Megaphone Crawler Core CI"
 
 on:
-  workflow_run:
-    workflows: ["Megaphone Standard CI"]
-    branches: [main]
-    types: 
-      - completed
   workflow_dispatch:
     inputs:
       logLevel:
@@ -21,6 +16,7 @@ on:
     paths:
       - 'src/megaphone.crawler.core/**'
       - 'src/megaphone.crawler.core.tests/**'
+      
 jobs:
    build:
     name: Megaphone Core CI
