@@ -34,7 +34,7 @@ jobs:
         context: .
         build-args: |
             ${{ format('USER={0}', secrets.GIT_HUB_USER) }}
-            ${{ format('PAT={0}', secrets.GIT_HUB_PATcd) }}
+            ${{ format('PAT={0}', secrets.GIT_HUB_PAT) }}
         push: true
         file: ./src/Dockerfile
         tags: |
