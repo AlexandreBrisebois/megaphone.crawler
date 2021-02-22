@@ -1,9 +1,8 @@
-@api-service = HD:2001
+#@api-service = HD:2001
 
-#@api-service = 127.0.0.1:33146
+@api-service = 127.0.0.1:33146
 
-### initial post
-
+### Crawl Feed
 POST http://{{api-service}}/api/crawl
 Content-Type: application/json
 
@@ -12,13 +11,27 @@ Content-Type: application/json
     "name": "crawl-request",
     "created": "2021-02-21T19:28:18.8220101+00:00",
     "parameters": {
-        "uri" : "https://blogs.msdn.microsoft.com/dotnet/feed"
+        "uri" : "https://blogs.msdn.microsoft.com/dotnet/feed",
+    },
+    "metadata": {}
+ }
+
+### Crawl Feed - expand child resources
+POST http://{{api-service}}/api/crawl
+Content-Type: application/json
+
+{
+    "id": "80bc3136-dac4-4aad-94ea-4f6c0c6648e7",
+    "name": "crawl-request",
+    "created": "2021-02-21T19:28:18.8220101+00:00",
+    "parameters": {
+        "uri" : "https://blogs.msdn.microsoft.com/dotnet/feed",
+        "expand" : "child-resources"
     },
     "metadata": {}
  }
 
 ### With provided metadata
-
 POST http://{{api-service}}/api/crawl
 Content-Type: application/json
 

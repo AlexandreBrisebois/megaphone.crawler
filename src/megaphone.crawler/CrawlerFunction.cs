@@ -41,11 +41,14 @@ namespace Megaphone.Crawler
             }
 
             var resource = await crawler.GetResourceAsync(commandMessage.Parameters["uri"].ToUri());
+            
             SetValuesFromPatameters(commandMessage, resource);
 
             log.LogInformation($"crawled ({resource.StatusCode}) : {resource.Self}");
-            
-            await LoadChildResouces(resource);
+
+            if (commandMessage.Parameters.TryGetValue("expand", out string p))
+                if (p == "child-resources")
+                    await LoadChildResouces(resource);
 
             return new OkObjectResult(resource);
         }
@@ -54,24 +57,25 @@ namespace Megaphone.Crawler
         {
             var childResources = new List<Resource>();
 
-            foreach(var r in resource.Resources)
+            foreach (var r in resource.Resources)
             {
                 var childResource = await GetChildResource(r);
                 if (childResource != Resource.Empty)
                     childResources.Add(childResource);
             }
 
-            foreach(var cr in childResources)
+            foreach (var cr in childResources)
             {
                 resource.Resources.RemoveAll(r => r.Id == cr.Id);
                 resource.Resources.Add(cr);
-            }           
+            }
         }
 
         private static async Task<Resource> GetChildResource(Resource r)
         {
 
-            var  resource =  await crawler.GetResourceAsync(r.Self);
+            var resource = await crawler.GetResourceAsync(r.Self);
+           
             resource.Display = r.Display;
             resource.Description = r.Description;
             resource.Published = r.Published;
@@ -101,10 +105,16 @@ namespace Megaphone.Crawler
 
         private static void SetValuesFromPatameters(CommandMessage commandMessage, Resource resource)
         {
-            if (commandMessage.Parameters.Count > 1)
+            if (commandMessage.Parameters.ContainsKey("display"))
             {
                 resource.Display = commandMessage.Parameters["display"];
+            }
+            if (commandMessage.Parameters.ContainsKey("description"))
+            {
                 resource.Description = commandMessage.Parameters["description"];
+            }
+            if (commandMessage.Parameters.ContainsKey("display"))
+            {
                 resource.Published = DateTimeOffset.Parse(commandMessage.Parameters["published"]);
             }
         }

@@ -4,6 +4,7 @@ using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Megaphone.Crawler.Tests
@@ -34,8 +35,29 @@ namespace Megaphone.Crawler.Tests
                 Assert.Equal(input.Parameters["id"], resource.Id);
                 Assert.Equal(input.Parameters["display"], resource.Display);
                 Assert.Equal(input.Parameters["description"], resource.Description);
-                Assert.Equal(DateTimeOffset.Parse(input.Parameters["published"]), resource.Published);         
+                Assert.Equal(DateTimeOffset.Parse(input.Parameters["published"]), resource.Published);
             }
+
+            Assert.True(resource.Resources.All(r => string.IsNullOrEmpty(r.Cache)));
+        }
+
+        [Fact]
+        public async void CrawlAndExapndChildResouces()
+        {
+            var input = MessageBuilder.NewCommand("crawl-request")
+                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")                                      
+                                      .WithParameters("expand", "child-resources")
+                                      .Make();
+
+            var response = await CrawlerFunction.Run(TestFactory.CreateHttpRequest(input), logger);
+
+            Assert.IsType<OkObjectResult>(response);
+            Assert.IsType<Resource>(response.Value);
+
+            var resource = (Resource)response.Value;
+
+            Assert.True(resource.Resources.All(r => !string.IsNullOrEmpty(r.Cache)));
+
         }
 
         public static readonly BadRequestData badRequestData = new();
