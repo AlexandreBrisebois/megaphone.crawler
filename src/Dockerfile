@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 COPY . .
 WORKDIR /src
 RUN echo "dotnet nuget add source https://nuget.pkg.github.com/AlexandreBrisebois/index.json --name github --username ${USER} --password ${PAT} --store-password-in-clear-text"
-RUN dotnet restore --configfile "./nuget.config" "./megaphone.crawler.sln"
+RUN dotnet restore "megaphone.crawler.sln"
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
 RUN dotnet build "megaphone.crawler.core.csproj" -c Release --no-restore
