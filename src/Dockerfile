@@ -9,7 +9,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 COPY . .
 WORKDIR /src
-RUN dotnet nuget add source https://nuget.pkg.github.com/AlexandreBrisebois/index.json -n github -u any -p ${PAT} --store-password-in-clear-text
+RUN echo "dotnet nuget add source https://nuget.pkg.github.com/AlexandreBrisebois/index.json -n github -u any -p ${PAT} --store-password-in-clear-text"
 RUN dotnet restore "megaphone.crawler.sln"
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
