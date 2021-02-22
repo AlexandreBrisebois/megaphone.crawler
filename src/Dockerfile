@@ -1,5 +1,8 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+ARG USER
+ARG PAT
+
 FROM mcr.microsoft.com/azure-functions/dotnet:3.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 80
@@ -7,7 +10,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 COPY . .
 WORKDIR /src
-COPY /NuGet.Config /root/.config/NuGet/
+RUN echo "dotnet nuget add source https://nuget.pkg.github.com/AlexandreBrisebois/index.json -n github - u $USER -p $PAT --store-password-in-clear-text"
 RUN dotnet restore "megaphone.crawler.sln"
 # megaphone.crawler.core
 WORKDIR "/src/megaphone.crawler.core"
