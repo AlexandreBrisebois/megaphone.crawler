@@ -21,7 +21,8 @@ namespace Megaphone.Crawler
         static readonly HttpClient httpClient = new();
         static readonly WebResourceCrawler crawler = new(httpClient);
 
-        static readonly string resourceApi = Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_API_URL");
+        static readonly string resourceApi = Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_API_URL") ?? "http://localhost";
+        static readonly bool resourcePush = bool.Parse(Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_PUSH") ?? "false");
 
         [FunctionName("crawl")]
         public static async Task<ObjectResult> Run(
