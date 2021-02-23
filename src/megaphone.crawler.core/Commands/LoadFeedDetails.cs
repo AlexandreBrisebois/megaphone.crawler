@@ -29,12 +29,13 @@ namespace Megaphone.Crawler.Core.Commands
             model.Resources.AddRange(feed.Items.Select(i =>
             {
                 var uri = i.Link.ToUri();
-                return new Resource(uri.ToGuid().ToString(), uri)
+                return new Resource
                 {
+                    Id = uri.ToGuid().ToString(),
+                    Self = uri,
                     Published = i.PublishingDate.GetValueOrDefault(),
                     Display = i.Title,
-                    Description = i.Description,
-                    Self = uri
+                    Description = i.Description
                 };
             }));
         }

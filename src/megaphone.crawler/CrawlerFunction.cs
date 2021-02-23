@@ -25,7 +25,7 @@ namespace Megaphone.Crawler
 
         [FunctionName("crawl")]
         public static async Task<ObjectResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "crawl")] HttpRequest req,
             ILogger log)
         {
             string requestBody = new StreamReader(req.Body).ReadToEnd();
