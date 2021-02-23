@@ -29,8 +29,10 @@ namespace Megaphone.Crawler.Core.Queires
         {
             var resourceId = response.RequestMessage.RequestUri.ToGuid().ToString();
 
-            var resource = new Resource(resourceId, response.RequestMessage.RequestUri)
+            var resource = new Resource
             {
+                Id = resourceId,
+                Self = response.RequestMessage.RequestUri,
                 IsActive = response.IsSuccessStatusCode,
                 StatusCode = (int)response.StatusCode
             };
