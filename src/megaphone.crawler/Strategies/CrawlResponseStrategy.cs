@@ -7,7 +7,7 @@ namespace Megaphone.Crawler.Strategies
 {
     internal class CrawlResponseStrategy : ResponseStrategy<SystemTextJsonResult>
     {
-        public CrawlResponseStrategy(AppConfig serviceContext) : base(serviceContext)
+        public CrawlResponseStrategy(IAppConfig serviceContext) : base(serviceContext)
         {
         }
 

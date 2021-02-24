@@ -6,7 +6,6 @@ using Megaphone.Crawler.Services;
 using Megaphone.Crawler.Strategies;
 using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -15,29 +14,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler
 {
-
-    public static class CrawlerFunction
+    public class CrawlerFunction
     {
-        [FunctionName("crawl")]
-        public static async Task<SystemTextJsonResult> Crawl(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "crawl")] HttpRequest req,
-            [FromServices] AppConfig configs,
-            [FromServices] WebResourceCrawler crawler,
-            [FromServices] PushService pushService,
-            ILogger log)
+        private readonly IWebResourceCrawler crawler;
+        private readonly List<ResponseStrategy<SystemTextJsonResult>> responseStrategies;
+
+        public CrawlerFunction(IAppConfig configs,
+                               IWebResourceCrawler crawler,
+                               IPushService pushService)
         {
-            List<ResponseStrategy<SystemTextJsonResult>> responseStrategies = new()
+            this.crawler = crawler;
+
+            responseStrategies = new()
             {
                 new ResourcePushStrategy(pushService, configs),
                 new CrawlResponseStrategy(configs)
             };
+        }
 
+        [FunctionName("crawl")]
+        public async Task<SystemTextJsonResult> Crawl(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "crawl")] HttpRequest req,
+            ILogger log)
+        {
             string requestBody = new StreamReader(req.Body).ReadToEnd();
             var commandMessage = JsonSerializer.Deserialize<CommandMessage>(requestBody);
 
@@ -58,12 +62,12 @@ namespace Megaphone.Crawler
 
             if (commandMessage.Parameters.TryGetValue("expand", out string p))
                 if (p == "child-resources")
-                    await LoadChildResouces(crawler, resource);
+                    await LoadChildResouces(resource);
 
             return await responseStrategies.First(s => s.CanExecute()).ExecuteAsync(resource);
         }
 
-        private static async Task LoadChildResouces(WebResourceCrawler crawler, Resource resource)
+        private async Task LoadChildResouces(Resource resource)
         {
             var childResources = new List<Resource>();
 
@@ -74,7 +78,6 @@ namespace Megaphone.Crawler
                 childResource.Display = r.Display;
                 childResource.Description = r.Description;
                 childResource.Published = r.Published;
-
 
                 if (childResource != Resource.Empty)
                     childResources.Add(childResource);
@@ -87,7 +90,7 @@ namespace Megaphone.Crawler
             }
         }
 
-        private static void SetValuesFromPatameters(CommandMessage commandMessage, Resource resource)
+        private void SetValuesFromPatameters(CommandMessage commandMessage, Resource resource)
         {
             if (commandMessage.Parameters.ContainsKey("display"))
             {

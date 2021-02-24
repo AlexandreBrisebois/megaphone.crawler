@@ -14,10 +14,10 @@ namespace Megaphone.Crawler
         public void Configure(IWebJobsBuilder builder)
         {
             var httpClient = new HttpClient();
-            builder.Services.AddSingleton(new AppConfig());
-            builder.Services.AddSingleton(httpClient);
-            builder.Services.AddSingleton(new WebResourceCrawler(httpClient));
-            builder.Services.AddSingleton(new ResourcePushService(httpClient));
+
+            builder.Services.AddSingleton<IAppConfig,AppConfig>();
+            builder.Services.AddSingleton<IWebResourceCrawler>(new WebResourceCrawler(httpClient));
+            builder.Services.AddSingleton<IPushService>(new ResourcePushService(httpClient));
         }
     }
 }

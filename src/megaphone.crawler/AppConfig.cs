@@ -1,27 +1,26 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Storage.Blob.Protocol;
+using System;
 using System.Collections.Generic;
 
 namespace Megaphone.Crawler
-{ 
-    public class AppConfig
+{
+    public interface IAppConfig
+    {
+        string ResourceApiUrl { get; }
+        bool ResourcePush { get; }
+    }
+
+    public class AppConfig : IAppConfig
     {
         Dictionary<string, object> configs = new();
 
         public AppConfig()
         {
-            Set("resourceApiUrl", Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_API_URL"));
-            Set("resourcePush", bool.Parse(Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_PUSH") ?? "false"));
+            ResourceApiUrl = Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_API_URL");
+            ResourcePush = bool.Parse(Environment.GetEnvironmentVariable("MEGAPHONE_RESOURCE_PUSH") ?? "false");
         }
 
-        protected void Set<T>(string key, T value) => configs[key] = value;
-
-        protected T Get<T>(string key) => (T)configs[key];
-
-        protected string Get(string key) => configs[key] as string;
-
-        public bool HasConfig(string key) => configs.ContainsKey(key) && configs[key] != null;
-
-        public string ResourceApiUrl => Get("resourceApiUrl");
-        public bool ResourcePush => Get<bool>("resourcePush");
+        public string ResourceApiUrl { get; private set; }
+        public bool ResourcePush { get; private set; }
     }
 }

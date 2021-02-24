@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Megaphone.Crawler.Services
 {
 
-    public class ResourcePushService : PushService
+    public class ResourcePushService : IPushService
     {
         private HttpClient httpClient;
 
@@ -16,7 +16,7 @@ namespace Megaphone.Crawler.Services
             this.httpClient = httpClient;
         }
 
-        public override async Task<HttpStatusCode> PushAsync(string url, object content)
+        public async Task<HttpStatusCode> PushAsync(string url, object content)
         {
             var json = JsonSerializer.Serialize(content);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");

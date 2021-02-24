@@ -8,9 +8,9 @@ namespace Megaphone.Crawler.Strategies
 {
     internal class ResourcePushStrategy : ResponseStrategy<SystemTextJsonResult>
     {
-        private readonly PushService service;
+        private readonly IPushService service;
 
-        public ResourcePushStrategy(PushService service, AppConfig configs) : base(configs)
+        public ResourcePushStrategy(IPushService service, IAppConfig configs) : base(configs)
         {
             this.service = service;
         }
@@ -24,7 +24,7 @@ namespace Megaphone.Crawler.Strategies
         {
             var response = await service.PushAsync($"{base.serviceContext.ResourceApiUrl}/api/resources", resource);
 
-            if (response != HttpStatusCode.OK)
+            if (response != HttpStatusCode.Created)
             {
                 return new SystemTextJsonResult(new ErrorPushRepresentation
                 {

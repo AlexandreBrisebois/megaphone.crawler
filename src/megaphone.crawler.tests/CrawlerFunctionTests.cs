@@ -29,11 +29,12 @@ namespace Megaphone.Crawler.Tests
 
             var input = (CommandMessage)body;
 
-            SystemTextJsonResult? response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
-                                                                         NoPushServiceConfig,
-                                                                         new WebResourceCrawler(new HttpClient()),
-                                                                         mockPushService,
-                                                                         logger);
+            CrawlerFunction func = new(NoPushServiceConfig,
+                                       new WebResourceCrawler(new HttpClient()),
+                                       mockPushService);
+
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),                                                                        
+                                                              logger);
 
             Assert.IsType<SystemTextJsonResult>(response);
 
@@ -61,11 +62,12 @@ namespace Megaphone.Crawler.Tests
                                       .WithParameters("expand", "child-resources")
                                       .Make();
 
-            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
-                                                       NoPushServiceConfig,
-                                                       new WebResourceCrawler(new HttpClient()),
-                                                       mockPushService,
-                                                       logger);
+            CrawlerFunction func = new(NoPushServiceConfig,
+                                       new WebResourceCrawler(new HttpClient()),
+                                       mockPushService);
+
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
+                                                              logger);
 
             Assert.IsType<SystemTextJsonResult>(response);
 
@@ -82,8 +84,12 @@ namespace Megaphone.Crawler.Tests
         [MemberData(nameof(badRequestData))]
         public async void BadRequestTest(object body)
         {
-            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(body), NoPushServiceConfig, new WebResourceCrawler(new HttpClient()), new ResourcePushService(new HttpClient()), logger);
+            CrawlerFunction func = new(NoPushServiceConfig,
+                                       new WebResourceCrawler(new HttpClient()),
+                                        new ResourcePushService(new HttpClient()));
 
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(body),
+                                                              logger);
             Assert.Equal(400, response.StatusCode);
         }
 
@@ -99,11 +105,12 @@ namespace Megaphone.Crawler.Tests
                                       .WithParameters("uri", "https://devblogs.microsoft.com/dotnet/feed/")
                                       .Make();
 
-            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
-                                                       NoPushDefaultUrlServiceContext,
-                                                       new WebResourceCrawler(new HttpClient()),
-                                                       mockPushService,
-                                                       logger);
+            CrawlerFunction func = new(NoPushDefaultUrlServiceContext,
+                                     new WebResourceCrawler(new HttpClient()),
+                                     mockPushService);
+
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
+                                                              logger);
 
             Assert.IsType<SystemTextJsonResult>(response);
 
@@ -123,7 +130,12 @@ namespace Megaphone.Crawler.Tests
                                       .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
                                       .Make();
 
-            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input), ErrorPushServiceConfig, new WebResourceCrawler(new HttpClient()), new ResourcePushService(new HttpClient()), logger);
+            CrawlerFunction func = new(ErrorPushServiceConfig,
+                                       new WebResourceCrawler(new HttpClient()),
+                                       new ResourcePushService(new HttpClient()));
+
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
+                                                              logger);
 
             Assert.IsType<SystemTextJsonResult>(response);
 
@@ -145,8 +157,12 @@ namespace Megaphone.Crawler.Tests
                                       .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
                                       .Make();
 
-            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input), PushServiceConfig, new WebResourceCrawler(new HttpClient()), mockPushService, logger);
+            CrawlerFunction func = new(PushServiceConfig,
+                                       new WebResourceCrawler(new HttpClient()),
+                                       mockPushService);
 
+            SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
+                                                              logger);
 
             Assert.IsType<SystemTextJsonResult>(response);
 

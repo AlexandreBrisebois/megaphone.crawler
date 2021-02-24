@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Services
 {
-    public abstract class PushService
+    public interface IPushService
     {
-        public abstract Task<HttpStatusCode> PushAsync(string url, object content);
+        Task<HttpStatusCode> PushAsync(string url, object content);
     }
 }

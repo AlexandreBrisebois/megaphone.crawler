@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Core
 {
-    public class WebResourceCrawler : Crawler<Resource>
+    public class WebResourceCrawler : Crawler<Resource>, IWebResourceCrawler
     {
         private readonly HttpClient httpClient;
 

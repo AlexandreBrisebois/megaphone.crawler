@@ -5,9 +5,9 @@ namespace Megaphone.Crawler.Strategies
 {
     internal abstract class ResponseStrategy<T>
     {
-        protected readonly AppConfig serviceContext;
+        protected readonly IAppConfig serviceContext;
 
-        public ResponseStrategy(AppConfig serviceContext)
+        public ResponseStrategy(IAppConfig serviceContext)
         {
             this.serviceContext = serviceContext;
         }

@@ -1,12 +1,15 @@
 ﻿namespace Megaphone.Crawler.Tests.Mocks
 {
 
-    public class MockAppConfig : AppConfig
+    public class MockAppConfig : IAppConfig
     {
         public MockAppConfig(bool resourcePush, string resourceApiUrl)
-        {
-            Set("resourcePush", resourcePush);
-            Set("resourceApiUrl", resourceApiUrl);
+        {            
+                ResourcePush = resourcePush;
+                ResourceApiUrl = resourceApiUrl;           
         }
+        public string ResourceApiUrl { get; set; }
+
+        public bool ResourcePush { get; set; }
     }
 }
