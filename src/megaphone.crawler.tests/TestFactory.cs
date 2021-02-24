@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace Megaphone.Crawler.Tests
 {
@@ -16,7 +14,7 @@ namespace Megaphone.Crawler.Tests
             var context = new DefaultHttpContext();
             var request = context.Request;
 
-            request.Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body)));
+            request.Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(body)));
             return request;
         }
 

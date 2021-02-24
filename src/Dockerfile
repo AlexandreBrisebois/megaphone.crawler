@@ -4,5 +4,5 @@ WORKDIR /home/site/wwwroot
 COPY . .
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logupdateging__Console__IsEnabled=true \
-    MEGAPHONE_RESOURCE_API_URL="http://localhost" \
-    MEGAPHONE_RESOURCE_PUSH=false
+    MEGAPHONE_RESOURCE_PUSH=false \
+    MEGAPHONE_RESOURCE_API_URL=http://localhost:80

@@ -1,10 +1,13 @@
-using Megaphone.Crawler.Core.Models;
+using Megaphone.Crawler.Core;
+using Megaphone.Crawler.Services;
 using Megaphone.Crawler.Tests.Data;
+using Megaphone.Crawler.Tests.Mocks;
 using Megaphone.Standard.Messages;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using Xunit;
 
 namespace Megaphone.Crawler.Tests
@@ -13,51 +16,64 @@ namespace Megaphone.Crawler.Tests
     {
         private readonly ILogger logger = TestFactory.CreateLogger();
 
+        private readonly MockAppConfig NoPushServiceConfig = new MockAppConfig(resourcePush: false,
+                                                                                resourceApiUrl: null);
+
         public static readonly GoodRequestData goodRequestData = new();
 
         [Theory]
         [MemberData(nameof(goodRequestData))]
         public async void OkRequestTest(object body, string expectedType)
         {
+            MockPushService mockPushService = new MockPushService();
+
             var input = (CommandMessage)body;
 
-            var response = await CrawlerFunction.Run(TestFactory.CreateHttpRequest(input), logger);
+            SystemTextJsonResult? response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
+                                                                         NoPushServiceConfig,
+                                                                         new WebResourceCrawler(new HttpClient()),
+                                                                         mockPushService,
+                                                                         logger);
 
-            Assert.IsType<OkObjectResult>(response);
-            Assert.IsType<Resource>(response.Value);
+            Assert.IsType<SystemTextJsonResult>(response);
 
-            var resource = (Resource)response.Value;
+            var resource = JsonSerializer.Deserialize<Representations.CrawlResultRepresentation>(response.Content);
 
             Assert.Equal(expectedType, resource.Type);
 
             if (input.Parameters.Count > 1)
             {
-                Assert.Equal(input.Parameters["id"], resource.Id);
                 Assert.Equal(input.Parameters["display"], resource.Display);
                 Assert.Equal(input.Parameters["description"], resource.Description);
                 Assert.Equal(DateTimeOffset.Parse(input.Parameters["published"]), resource.Published);
             }
 
-            Assert.True(resource.Resources.All(r => string.IsNullOrEmpty(r.Cache)));
+            Assert.False(mockPushService.WasCalled);
         }
 
         [Fact]
         public async void CrawlAndExapndChildResouces()
         {
+            MockPushService mockPushService = new MockPushService();
+
             var input = MessageBuilder.NewCommand("crawl-request")
-                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")                                      
+                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
                                       .WithParameters("expand", "child-resources")
                                       .Make();
 
-            var response = await CrawlerFunction.Run(TestFactory.CreateHttpRequest(input), logger);
+            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
+                                                       NoPushServiceConfig,
+                                                       new WebResourceCrawler(new HttpClient()),
+                                                       mockPushService,
+                                                       logger);
 
-            Assert.IsType<OkObjectResult>(response);
-            Assert.IsType<Resource>(response.Value);
+            Assert.IsType<SystemTextJsonResult>(response);
 
-            var resource = (Resource)response.Value;
+            var resource = JsonSerializer.Deserialize<Representations.CrawlExpandedResultRepresentation>(response.Content);
 
-            Assert.True(resource.Resources.All(r => !string.IsNullOrEmpty(r.Cache)));
+            Assert.True(resource.Resources.All(r => !string.IsNullOrEmpty(r.Description)));
 
+            Assert.False(mockPushService.WasCalled);
         }
 
         public static readonly BadRequestData badRequestData = new();
@@ -66,9 +82,78 @@ namespace Megaphone.Crawler.Tests
         [MemberData(nameof(badRequestData))]
         public async void BadRequestTest(object body)
         {
-            var response = await CrawlerFunction.Run(TestFactory.CreateHttpRequest(body), logger);
+            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(body), NoPushServiceConfig, new WebResourceCrawler(new HttpClient()), new ResourcePushService(new HttpClient()), logger);
 
-            Assert.IsType<BadRequestObjectResult>(response);
+            Assert.Equal(400, response.StatusCode);
+        }
+
+        private readonly MockAppConfig NoPushDefaultUrlServiceContext = new MockAppConfig(resourcePush: true,
+                                                                                          resourceApiUrl: "http://localhost:80");
+
+        [Fact]
+        public async void CrawlPush()
+        {
+            MockPushService mockPushService = new MockPushService();
+
+            var input = MessageBuilder.NewCommand("crawl-request")
+                                      .WithParameters("uri", "https://devblogs.microsoft.com/dotnet/feed/")
+                                      .Make();
+
+            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input),
+                                                       NoPushDefaultUrlServiceContext,
+                                                       new WebResourceCrawler(new HttpClient()),
+                                                       mockPushService,
+                                                       logger);
+
+            Assert.IsType<SystemTextJsonResult>(response);
+
+            var resource = JsonSerializer.Deserialize<Representations.CrawlResultRepresentation>(response.Content);
+
+            Assert.Equal("https://devblogs.microsoft.com/dotnet/feed/", resource.Url);
+            Assert.True(mockPushService.WasCalled);
+        }
+
+        private readonly MockAppConfig ErrorPushServiceConfig = new MockAppConfig(resourcePush: true,
+                                                                                   resourceApiUrl: "http://domain.com");
+
+        [Fact]
+        public async void CrawlFailPushDefaultUrl()
+        {
+            var input = MessageBuilder.NewCommand("crawl-request")
+                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
+                                      .Make();
+
+            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input), ErrorPushServiceConfig, new WebResourceCrawler(new HttpClient()), new ResourcePushService(new HttpClient()), logger);
+
+            Assert.IsType<SystemTextJsonResult>(response);
+
+            var resource = JsonSerializer.Deserialize<Representations.ErrorPushRepresentation>(response.Content);
+
+            Assert.Equal(404, resource.StatusCode);
+
+        }
+
+        private readonly MockAppConfig PushServiceConfig = new MockAppConfig(resourcePush: true,
+                                                                             resourceApiUrl: "http://domain.com");
+
+        [Fact]
+        public async void CrawlPushDefaultUrl()
+        {
+            MockPushService mockPushService = new MockPushService();
+
+            var input = MessageBuilder.NewCommand("crawl-request")
+                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
+                                      .Make();
+
+            var response = await CrawlerFunction.Crawl(TestFactory.CreateHttpRequest(input), PushServiceConfig, new WebResourceCrawler(new HttpClient()), mockPushService, logger);
+
+
+            Assert.IsType<SystemTextJsonResult>(response);
+
+            var resource = JsonSerializer.Deserialize<Representations.CrawlPushedResultRepresentation>(response.Content);
+
+            Assert.False(string.IsNullOrEmpty(resource.Display));
+            Assert.True(mockPushService.WasCalled);
         }
     }
 }
