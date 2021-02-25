@@ -45,7 +45,7 @@ namespace Megaphone.Crawler
             string requestBody = new StreamReader(req.Body).ReadToEnd();
             var commandMessage = JsonSerializer.Deserialize<CommandMessage>(requestBody);
 
-            if (commandMessage.Name != "crawl-request")
+            if (commandMessage.Action != "crawl-request")
             {
                 return new SystemTextJsonResult(new ErrorCommandRepresentation
                 {

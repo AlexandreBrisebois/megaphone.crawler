@@ -20,4 +20,6 @@ FROM base AS final
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
+    MEGAPHONE_RESOURCE_PUSH=true \
+    MEGAPHONE_RESOURCE_API_URL=http://HD:2002
