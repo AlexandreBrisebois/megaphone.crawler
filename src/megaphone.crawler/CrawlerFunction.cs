@@ -22,7 +22,7 @@ namespace Megaphone.Crawler
     public class CrawlerFunction
     {
         private readonly IWebResourceCrawler crawler;
-        private readonly List<ResponseStrategy<Resource,SystemTextJsonResult>> responseStrategies;
+        private readonly List<ResponseStrategy<Resource, SystemTextJsonResult>> responseStrategies;
         private readonly List<Strategy<Resource>> childResourceStrategy;
 
         public CrawlerFunction(IAppConfig configs,
@@ -40,7 +40,7 @@ namespace Megaphone.Crawler
             responseStrategies = new()
             {
                 new PushResourceStrategy(restService, configs),
-                new CrawlResponseStrategy(configs)
+                new DefaultResponseStrategy(configs)
             };
         }
 
@@ -66,10 +66,20 @@ namespace Megaphone.Crawler
 
             log.LogInformation($"crawled ({resource.StatusCode}) : {resource.Self}");
 
-            await childResourceStrategy.First(s => s.CanExecute()).ExecuteAsync(resource);            
+            try
+            {
+                await childResourceStrategy.First(s => s.CanExecute())
+                                           .ExecuteAsync(resource);
+            }catch
+            {
+                return new SystemTextJsonResult(new ErrorRepresentation
+                {
+                    Message = "failed to process child resources, check urls provided in app configurations.",
+                }, statusCode: HttpStatusCode.BadRequest);
+            }
 
             return await responseStrategies.First(s => s.CanExecute()).ExecuteAsync(resource);
-        }      
+        }
 
         private void SetValuesFromPatameters(CommandMessage commandMessage, Resource resource)
         {

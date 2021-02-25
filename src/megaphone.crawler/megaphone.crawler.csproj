@@ -30,4 +30,7 @@
 	<ItemGroup>
 	  <None Remove="..\.dockerignore" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Commands\" />
+	</ItemGroup>
 </Project>

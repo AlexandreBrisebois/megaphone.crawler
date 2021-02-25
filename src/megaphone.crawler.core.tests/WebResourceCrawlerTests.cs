@@ -26,7 +26,7 @@ namespace megaphone.crawler.core.tests
 
             Assert.Equal(expectedResource.Id, resource.Id);
             Assert.Equal(expectedResource.Display, resource.Display);
-            Assert.Equal(expectedResource.Self, resource.Self);
+            Assert.Equal(new Uri(expectedResource.Self), new Uri(resource.Self));
             Assert.Equal(expectedResource.IsActive, resource.IsActive);
             Assert.Equal(expectedResource.StatusCode, resource.StatusCode);
             Assert.Equal(expectedResource.Type, resource.Type);

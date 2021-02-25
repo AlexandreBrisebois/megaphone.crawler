@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Strategies
 {
-    internal class CrawlResponseStrategy : ResponseStrategy<Resource,SystemTextJsonResult>
+    internal class DefaultResponseStrategy : ResponseStrategy<Resource,SystemTextJsonResult>
     {
-        public CrawlResponseStrategy(IAppConfig serviceContext) : base(serviceContext)
+        public DefaultResponseStrategy(IAppConfig serviceContext) : base(serviceContext)
         {
         }
 

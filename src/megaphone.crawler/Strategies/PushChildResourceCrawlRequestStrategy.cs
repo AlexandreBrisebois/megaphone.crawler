@@ -22,17 +22,17 @@ namespace Megaphone.Crawler.Strategies
 
         internal async override Task ExecuteAsync(Resource model)
         {
-            model.Resources.ForEach(async r =>
+            foreach(Resource r in model.Resources)
             {
                 var message = MessageBuilder.NewCommand("crawl-request")
-                                            .WithParameters("uri", model.Self.ToString())
-                                            .WithParameters("display", model.Display)
-                                            .WithParameters("description", model.Description)
-                                            .WithParameters("published", model.Published.ToString())
-                                            .Make();
+                                          .WithParameters("uri", model.Self.ToString())
+                                          .WithParameters("display", model.Display)
+                                          .WithParameters("description", model.Description)
+                                          .WithParameters("published", model.Published.ToString())
+                                          .Make();
 
                 var response = await restService.PostAsync(configs.CrawlMessageApiUrl, message);
-            });
+            }
         }
     }
 }
