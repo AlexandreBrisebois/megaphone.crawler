@@ -1,5 +1,5 @@
 using Megaphone.Crawler.Core;
-using Megaphone.Crawler.Services;
+using Megaphone.Crawler.Core.Services;
 using Megaphone.Crawler.Tests.Data;
 using Megaphone.Crawler.Tests.Mocks;
 using Megaphone.Standard.Messages;
@@ -17,7 +17,8 @@ namespace Megaphone.Crawler.Tests
         private readonly ILogger logger = TestFactory.CreateLogger();
 
         private readonly MockAppConfig NoPushServiceConfig = new MockAppConfig(resourcePush: false,
-                                                                                resourceApiUrl: null);
+                                                                               resourceApiUrl: null,
+                                                                               crawlMessageApiUrl: null);
 
         public static readonly GoodRequestData goodRequestData = new();
 
@@ -25,12 +26,12 @@ namespace Megaphone.Crawler.Tests
         [MemberData(nameof(goodRequestData))]
         public async void OkRequestTest(object body, string expectedType)
         {
-            MockPushService mockPushService = new MockPushService();
+            MockRestService mockPushService = new MockRestService();
 
             var input = (CommandMessage)body;
 
             CrawlerFunction func = new(NoPushServiceConfig,
-                                       new WebResourceCrawler(new HttpClient()),
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
                                        mockPushService);
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),                                                                        
@@ -49,21 +50,20 @@ namespace Megaphone.Crawler.Tests
                 Assert.Equal(DateTimeOffset.Parse(input.Parameters["published"]), resource.Published);
             }
 
-            Assert.False(mockPushService.WasCalled);
+            Assert.False(mockPushService.PostWasCalled);
         }
 
         [Fact]
         public async void CrawlAndExapndChildResouces()
         {
-            MockPushService mockPushService = new MockPushService();
+            MockRestService mockPushService = new MockRestService();
 
             var input = MessageBuilder.NewCommand("crawl-request")
                                       .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
-                                      .WithParameters("expand", "child-resources")
                                       .Make();
 
             CrawlerFunction func = new(NoPushServiceConfig,
-                                       new WebResourceCrawler(new HttpClient()),
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
                                        mockPushService);
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
@@ -75,7 +75,7 @@ namespace Megaphone.Crawler.Tests
 
             Assert.True(resource.Resources.All(r => !string.IsNullOrEmpty(r.Description)));
 
-            Assert.False(mockPushService.WasCalled);
+            Assert.False(mockPushService.PostWasCalled);
         }
 
         public static readonly BadRequestData badRequestData = new();
@@ -85,8 +85,8 @@ namespace Megaphone.Crawler.Tests
         public async void BadRequestTest(object body)
         {
             CrawlerFunction func = new(NoPushServiceConfig,
-                                       new WebResourceCrawler(new HttpClient()),
-                                        new ResourcePushService(new HttpClient()));
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
+                                       new RestService(new HttpClient()));
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(body),
                                                               logger);
@@ -94,19 +94,20 @@ namespace Megaphone.Crawler.Tests
         }
 
         private readonly MockAppConfig NoPushDefaultUrlServiceContext = new MockAppConfig(resourcePush: true,
-                                                                                          resourceApiUrl: "http://localhost:80");
+                                                                                          resourceApiUrl: "http://domain.com",
+                                                                                          crawlMessageApiUrl: "http://domain.com");
 
         [Fact]
         public async void CrawlPush()
         {
-            MockPushService mockPushService = new MockPushService();
+            MockRestService mockPushService = new MockRestService();
 
             var input = MessageBuilder.NewCommand("crawl-request")
                                       .WithParameters("uri", "https://devblogs.microsoft.com/dotnet/feed/")
                                       .Make();
 
             CrawlerFunction func = new(NoPushDefaultUrlServiceContext,
-                                     new WebResourceCrawler(new HttpClient()),
+                                     new WebResourceCrawler(new RestService(new HttpClient())),
                                      mockPushService);
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
@@ -117,12 +118,13 @@ namespace Megaphone.Crawler.Tests
             var resource = JsonSerializer.Deserialize<Representations.CrawlResultRepresentation>(response.Content);
 
             Assert.Equal("https://devblogs.microsoft.com/dotnet/feed/", resource.Url);
-            Assert.True(mockPushService.WasCalled);
+            Assert.True(mockPushService.PostWasCalled);
         }
 
         private readonly MockAppConfig ErrorPushServiceConfig = new MockAppConfig(resourcePush: true,
-                                                                                   resourceApiUrl: "http://domain.com");
-
+                                                                                   resourceApiUrl: "http://domain.com",
+                                                                                   crawlMessageApiUrl: "http://domain.com");
+      
         [Fact]
         public async void CrawlFailPushDefaultUrl()
         {
@@ -131,8 +133,8 @@ namespace Megaphone.Crawler.Tests
                                       .Make();
 
             CrawlerFunction func = new(ErrorPushServiceConfig,
-                                       new WebResourceCrawler(new HttpClient()),
-                                       new ResourcePushService(new HttpClient()));
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
+                                       new RestService(new HttpClient()));
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
                                                               logger);
@@ -146,19 +148,20 @@ namespace Megaphone.Crawler.Tests
         }
 
         private readonly MockAppConfig PushServiceConfig = new MockAppConfig(resourcePush: true,
-                                                                             resourceApiUrl: "http://domain.com");
+                                                                             resourceApiUrl: "http://domain.com",
+                                                                             crawlMessageApiUrl: "http://domain.com");
 
         [Fact]
-        public async void CrawlPushDefaultUrl()
+        public async void CrawlPushPagetUrl()
         {
-            MockPushService mockPushService = new MockPushService();
+            MockRestService mockPushService = new MockRestService();
 
             var input = MessageBuilder.NewCommand("crawl-request")
-                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
+                                      .WithParameters("uri", "https://blogs.windows.com/windowsexperience/2021/02/23/what-to-know-before-you-accept-that-cookie/")
                                       .Make();
 
             CrawlerFunction func = new(PushServiceConfig,
-                                       new WebResourceCrawler(new HttpClient()),
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
                                        mockPushService);
 
             SystemTextJsonResult? response = await func.Crawl(TestFactory.CreateHttpRequest(input),
@@ -169,7 +172,35 @@ namespace Megaphone.Crawler.Tests
             var resource = JsonSerializer.Deserialize<Representations.CrawlPushedResultRepresentation>(response.Content);
 
             Assert.False(string.IsNullOrEmpty(resource.Display));
-            Assert.True(mockPushService.WasCalled);
+
+            Assert.Equal(1,mockPushService.PostCount);
+            Assert.True(mockPushService.PostWasCalled);
+        }
+        
+        [Fact]
+        public async void CrawlPushFeedUrl()
+        {
+            MockRestService mockPushService = new MockRestService();
+
+            var input = MessageBuilder.NewCommand("crawl-request")
+                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
+                                      .Make();
+
+            CrawlerFunction func = new(PushServiceConfig,
+                                       new WebResourceCrawler(new RestService(new HttpClient())),
+                                       mockPushService);
+
+            SystemTextJsonResult response = await func.Crawl(TestFactory.CreateHttpRequest(input),
+                                                              logger);
+
+            Assert.IsType<SystemTextJsonResult>(response);
+
+            var resource = JsonSerializer.Deserialize<Representations.CrawlPushedResultRepresentation>(response.Content);
+
+            Assert.False(string.IsNullOrEmpty(resource.Display));
+
+            Assert.Equal(11,mockPushService.PostCount);
+            Assert.True(mockPushService.PostWasCalled);
         }
     }
 }

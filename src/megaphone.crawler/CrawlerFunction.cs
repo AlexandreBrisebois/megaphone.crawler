@@ -1,8 +1,8 @@
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Extensions;
 using Megaphone.Crawler.Core.Models;
+using Megaphone.Crawler.Core.Services;
 using Megaphone.Crawler.Representations;
-using Megaphone.Crawler.Services;
 using Megaphone.Crawler.Strategies;
 using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Http;
@@ -22,25 +22,31 @@ namespace Megaphone.Crawler
     public class CrawlerFunction
     {
         private readonly IWebResourceCrawler crawler;
-        private readonly List<ResponseStrategy<SystemTextJsonResult>> responseStrategies;
+        private readonly List<ResponseStrategy<Resource,SystemTextJsonResult>> responseStrategies;
+        private readonly List<Strategy<Resource>> childResourceStrategy;
 
         public CrawlerFunction(IAppConfig configs,
                                IWebResourceCrawler crawler,
-                               IPushService pushService)
+                               IRestService restService)
         {
             this.crawler = crawler;
 
+            childResourceStrategy = new()
+            {
+                new PushChildResourceCrawlRequestStrategy(restService, configs),
+                new CrawlChildResourcesStrategy(crawler, configs)
+            };
+
             responseStrategies = new()
             {
-                new ResourcePushStrategy(pushService, configs),
+                new PushResourceStrategy(restService, configs),
                 new CrawlResponseStrategy(configs)
             };
         }
 
         [FunctionName("crawl")]
-        public async Task<SystemTextJsonResult> Crawl(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "crawl")] HttpRequest req,
-            ILogger log)
+        public async Task<SystemTextJsonResult> Crawl([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "crawl")] HttpRequest req,
+                                                      ILogger log)
         {
             string requestBody = new StreamReader(req.Body).ReadToEnd();
             var commandMessage = JsonSerializer.Deserialize<CommandMessage>(requestBody);
@@ -54,41 +60,16 @@ namespace Megaphone.Crawler
                 }, statusCode: HttpStatusCode.BadRequest);
             }
 
-            var resource = await crawler.GetResourceAsync(commandMessage.Parameters["uri"].ToUri());
+            var resource = await crawler.GetResourceAsync(commandMessage.Parameters["uri"]);
 
             SetValuesFromPatameters(commandMessage, resource);
 
             log.LogInformation($"crawled ({resource.StatusCode}) : {resource.Self}");
 
-            if (commandMessage.Parameters.TryGetValue("expand", out string p))
-                if (p == "child-resources")
-                    await LoadChildResouces(resource);
+            await childResourceStrategy.First(s => s.CanExecute()).ExecuteAsync(resource);            
 
             return await responseStrategies.First(s => s.CanExecute()).ExecuteAsync(resource);
-        }
-
-        private async Task LoadChildResouces(Resource resource)
-        {
-            var childResources = new List<Resource>();
-
-            foreach (var r in resource.Resources)
-            {
-               var childResource = await crawler.GetResourceAsync(r.Self);
-
-                childResource.Display = r.Display;
-                childResource.Description = r.Description;
-                childResource.Published = r.Published;
-
-                if (childResource != Resource.Empty)
-                    childResources.Add(childResource);
-            }
-
-            foreach (var cr in childResources)
-            {
-                resource.Resources.RemoveAll(r => r.Id == cr.Id);
-                resource.Resources.Add(cr);
-            }
-        }
+        }      
 
         private void SetValuesFromPatameters(CommandMessage commandMessage, Resource resource)
         {
@@ -100,7 +81,7 @@ namespace Megaphone.Crawler
             {
                 resource.Description = commandMessage.Parameters["description"];
             }
-            if (commandMessage.Parameters.ContainsKey("display"))
+            if (commandMessage.Parameters.ContainsKey("published"))
             {
                 resource.Published = DateTimeOffset.Parse(commandMessage.Parameters["published"]);
             }

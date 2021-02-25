@@ -1,19 +1,12 @@
-﻿using Megaphone.Crawler.Core.Models;
-using System.Threading.Tasks;
-
-namespace Megaphone.Crawler.Strategies
+﻿namespace Megaphone.Crawler.Strategies
 {
-    internal abstract class ResponseStrategy<T>
+    internal abstract class ResponseStrategy<Model, Result> : Strategy<Model, Result>
     {
-        protected readonly IAppConfig serviceContext;
+        protected readonly IAppConfig configs;
 
         public ResponseStrategy(IAppConfig serviceContext)
         {
-            this.serviceContext = serviceContext;
+            this.configs = serviceContext;
         }
-
-        internal abstract bool CanExecute();
-
-        internal abstract Task<T> ExecuteAsync(Resource resource);
     }
 }

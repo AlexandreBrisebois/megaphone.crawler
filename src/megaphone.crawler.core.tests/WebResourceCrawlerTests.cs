@@ -1,5 +1,6 @@
 ﻿using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Models;
+using Megaphone.Crawler.Core.Services;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -14,10 +15,11 @@ namespace megaphone.crawler.core.tests
 
         [Theory(DisplayName = "Create Resource from Uri")]
         [MemberData(nameof(data))]
-        public async Task CrawlUri(Uri uri, Resource expectedResource)
+        public async Task CrawlUri(string uri, Resource expectedResource)
         {
             HttpClient httpClient = new();
-            WebResourceCrawler crawler = new(httpClient);
+            RestService restService = new(httpClient);
+            WebResourceCrawler crawler = new(restService);
             var resource = await crawler.GetResourceAsync(uri);
 
             Assert.IsType<Resource>(resource);

@@ -1,5 +1,6 @@
 ﻿using Megaphone.Crawler.Core.Models;
 using Megaphone.Standard.Representations.Links;
+using System.Linq;
 
 namespace Megaphone.Crawler.Representations
 {
@@ -18,6 +19,25 @@ namespace Megaphone.Crawler.Representations
                 StatusCode = resource.StatusCode,
                 Type = resource.Type
             };
+
+            return r;
+        }
+
+        public static CrawlExpandedResultRepresentation MakeCrawlExpandedResponseRepresentation(Resource resource)
+        {
+            var r = new CrawlExpandedResultRepresentation
+            {
+                Display = resource.Display,
+                Url = resource.Self.ToString(),
+                Created = resource.Created,
+                Description = resource.Description,
+                IsActive = resource.IsActive,
+                Published = resource.Published,
+                StatusCode = resource.StatusCode,
+                Type = resource.Type
+            };
+
+            r.Resources = resource.Resources.Select(c => MakeCrawlResponseRepresentation(c)).ToList();
 
             return r;
         }

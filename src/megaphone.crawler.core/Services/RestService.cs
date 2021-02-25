@@ -1,22 +1,28 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Megaphone.Crawler.Services
+namespace Megaphone.Crawler.Core.Services
 {
-
-    public class ResourcePushService : IPushService
+    public class RestService : IRestService
     {
         private HttpClient httpClient;
 
-        public ResourcePushService(HttpClient httpClient)
+        public RestService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
 
-        public async Task<HttpStatusCode> PushAsync(string url, object content)
+        public async Task<HttpResponseMessage> GetAsync(string url)
+        {
+            var response = await httpClient.GetAsync(url);
+            return response;
+        }
+
+        public async Task<HttpStatusCode> PostAsync(string url, object content)
         {
             var json = JsonSerializer.Serialize(content);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");

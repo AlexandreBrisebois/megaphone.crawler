@@ -6,6 +6,6 @@ namespace Megaphone.Crawler.Core
 {
     public interface IWebResourceCrawler
     {
-        Task<Resource> GetResourceAsync(Uri uri);
+        Task<Resource> GetResourceAsync(string uri);
     }
 }

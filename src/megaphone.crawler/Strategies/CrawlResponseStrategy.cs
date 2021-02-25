@@ -1,11 +1,12 @@
 ﻿using Megaphone.Crawler.Core.Models;
 using Megaphone.Crawler.Representations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Strategies
 {
-    internal class CrawlResponseStrategy : ResponseStrategy<SystemTextJsonResult>
+    internal class CrawlResponseStrategy : ResponseStrategy<Resource,SystemTextJsonResult>
     {
         public CrawlResponseStrategy(IAppConfig serviceContext) : base(serviceContext)
         {
@@ -18,7 +19,8 @@ namespace Megaphone.Crawler.Strategies
 
         internal override Task<SystemTextJsonResult> ExecuteAsync(Resource resource)
         {
-            var representation = RepresentationFactory.MakeCrawlResponseRepresentation(resource);
+            object representation = resource.Resources.Any() ? RepresentationFactory.MakeCrawlExpandedResponseRepresentation(resource) : RepresentationFactory.MakeCrawlResponseRepresentation(resource);
+
             return Task.FromResult(new SystemTextJsonResult(representation, statusCode: HttpStatusCode.OK));
         }
     }

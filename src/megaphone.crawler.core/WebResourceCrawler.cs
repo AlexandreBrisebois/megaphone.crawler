@@ -1,23 +1,23 @@
 ﻿using Megaphone.Crawler.Core.Models;
 using Megaphone.Crawler.Core.Queires;
+using Megaphone.Crawler.Core.Services;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Core
 {
     public class WebResourceCrawler : Crawler<Resource>, IWebResourceCrawler
     {
-        private readonly HttpClient httpClient;
+        private readonly IRestService service;
 
-        public WebResourceCrawler(HttpClient httpClient)
+        public WebResourceCrawler(IRestService service)
         {
-            this.httpClient = httpClient;
+            this.service = service;
         }
 
-        public override async Task<Resource> GetResourceAsync(Uri uri)
+        public override async Task<Resource> GetResourceAsync(string uri)
         {
-            var query = new GetResourceFromUri(httpClient);
+            var query = new GetResourceFromUri(service);
             return await query.ExecuteAsync(uri);
         }
     }

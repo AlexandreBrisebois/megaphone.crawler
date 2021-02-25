@@ -21,7 +21,7 @@ namespace Megaphone.Crawler.Core.Models
         [JsonPropertyName("description")]
         public string Description { get; set; } = string.Empty;
         [JsonPropertyName("self")]
-        public Uri Self { get; set; }
+        public string Self { get; set; }
         [JsonPropertyName("published")]
         public DateTimeOffset Published { get; set; }
         [JsonPropertyName("cache")]

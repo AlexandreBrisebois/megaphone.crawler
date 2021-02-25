@@ -28,10 +28,10 @@ namespace Megaphone.Crawler.Core.Commands
 
             model.Resources.AddRange(feed.Items.Select(i =>
             {
-                var uri = i.Link.ToUri();
+                var uri = i.Link;
                 return new Resource
                 {
-                    Id = uri.ToGuid().ToString(),
+                    Id = uri.ToUri().ToGuid().ToString(),
                     Self = uri,
                     Published = i.PublishingDate.GetValueOrDefault(),
                     Display = i.Title,

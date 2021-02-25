@@ -1,6 +1,6 @@
 ﻿using Megaphone.Crawler;
 using Megaphone.Crawler.Core;
-using Megaphone.Crawler.Services;
+using Megaphone.Crawler.Core.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +16,8 @@ namespace Megaphone.Crawler
             var httpClient = new HttpClient();
 
             builder.Services.AddSingleton<IAppConfig,AppConfig>();
-            builder.Services.AddSingleton<IWebResourceCrawler>(new WebResourceCrawler(httpClient));
-            builder.Services.AddSingleton<IPushService>(new ResourcePushService(httpClient));
+            builder.Services.AddSingleton<IRestService>(new RestService(httpClient));
+            builder.Services.AddSingleton<IWebResourceCrawler, WebResourceCrawler>();
         }
     }
 }

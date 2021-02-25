@@ -1,6 +1,7 @@
 ﻿using Megaphone.Crawler.Core.Commands;
 using Megaphone.Crawler.Core.Extensions;
 using Megaphone.Crawler.Core.Models;
+using Megaphone.Crawler.Core.Services;
 using Megaphone.Standard.Queries;
 using System;
 using System.Net.Http;
@@ -9,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Core.Queires
 {
-    internal class GetResourceFromUri : IQuery<Uri, Resource>
+    internal class GetResourceFromUri : IQuery<string, Resource>
     {
-        private readonly HttpClient client;
+        private readonly IRestService service;
 
-        public GetResourceFromUri(HttpClient client)
+        public GetResourceFromUri(IRestService client)
         {
-            this.client = client;
+            this.service = client;
         }
 
-        public async Task<Resource> ExecuteAsync(Uri model)
+        public async Task<Resource> ExecuteAsync(string model)
         {
-            var response = await client.GetAsync(model);
+            var response = await service.GetAsync(model);
 
             return await MakeResourceAsync(response);
         }
@@ -32,7 +33,7 @@ namespace Megaphone.Crawler.Core.Queires
             var resource = new Resource
             {
                 Id = resourceId,
-                Self = response.RequestMessage.RequestUri,
+                Self = response.RequestMessage.RequestUri.ToString(),
                 IsActive = response.IsSuccessStatusCode,
                 StatusCode = (int)response.StatusCode
             };

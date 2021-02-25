@@ -22,4 +22,5 @@ COPY --from=publish /app/publish .
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
     MEGAPHONE_RESOURCE_PUSH=true \
-    MEGAPHONE_RESOURCE_API_URL=http://HD:2002
+    MEGAPHONE_RESOURCE_API_URL=http://HD:2002/api/resources \
+    MEGAPHONE_CRAWL_MESSAGE_API_URL=http://HD:2001/api/crawl 
