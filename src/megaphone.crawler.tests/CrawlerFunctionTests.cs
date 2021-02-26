@@ -121,31 +121,6 @@ namespace Megaphone.Crawler.Tests
             Assert.True(mockPushService.PostWasCalled);
         }
 
-        private readonly MockAppConfig ErrorPushServiceConfig = new MockAppConfig(resourcePush: true,
-                                                                                  resourceApiUrl: "http://localhost",
-                                                                                  crawlMessageApiUrl: "http://localhost");
-      
-        [Fact]
-        public async void CrawlFailPushDefaultUrl()
-        {
-            var input = MessageBuilder.NewCommand("crawl-request")
-                                      .WithParameters("uri", "https://blogs.msdn.microsoft.com/dotnet/feed")
-                                      .Make();
-
-            CrawlerFunction func = new(ErrorPushServiceConfig,
-                                       new WebResourceCrawler(new RestService(new HttpClient())),
-                                       new RestService(new HttpClient()));
-
-            SystemTextJsonResult response = await func.Crawl(TestFactory.CreateHttpRequest(input),
-                                                              logger);
-
-            Assert.IsType<SystemTextJsonResult>(response);
-
-            var resource = JsonSerializer.Deserialize<Representations.ErrorRepresentation>(response.Content);
-
-            Assert.Equal("failed to process child resources, check urls provided in app configurations.", resource.Message);
-        }
-
         private readonly MockAppConfig PushServiceConfig = new MockAppConfig(resourcePush: true,
                                                                              resourceApiUrl: "http://domain.com",
                                                                              crawlMessageApiUrl: "http://domain.com");
