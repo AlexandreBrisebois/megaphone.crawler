@@ -1,6 +1,8 @@
 ﻿using Megaphone.Crawler.Core.Models;
 using Megaphone.Crawler.Core.Services;
 using Megaphone.Standard.Messages;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Strategies
@@ -22,17 +24,17 @@ namespace Megaphone.Crawler.Strategies
 
         internal async override Task ExecuteAsync(Resource model)
         {
-            foreach(Resource r in model.Resources)
+            model.Resources.ForEach(async r =>
             {
                 var message = MessageBuilder.NewCommand("crawl-request")
-                                          .WithParameters("uri", model.Self.ToString())
-                                          .WithParameters("display", model.Display)
-                                          .WithParameters("description", model.Description)
-                                          .WithParameters("published", model.Published.ToString())
-                                          .Make();
+                                            .WithParameters("uri", r.Self.ToString())
+                                            .WithParameters("display", r.Display)
+                                            .WithParameters("description", r.Description)
+                                            .WithParameters("published", r.Published.ToString())
+                                            .Make();
 
                 var response = await restService.PostAsync(configs.CrawlMessageApiUrl, message);
-            }
+            });
         }
     }
 }

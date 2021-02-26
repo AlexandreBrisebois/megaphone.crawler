@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-functions/dotnet:3.0 AS final
+FROM mcr.microsoft.com/azure-functions/dotnet:3.0-slim AS final
 EXPOSE 80
 WORKDIR /home/site/wwwroot
 COPY . .
