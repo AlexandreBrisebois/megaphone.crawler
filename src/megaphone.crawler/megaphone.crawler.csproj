@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Megaphone.Crawler</AssemblyName>
     <RootNamespace>Megaphone.Crawler</RootNamespace>
-    <UserSecretsId>bac856ea-3f7c-4d7f-83a2-e1319ddac86f</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
