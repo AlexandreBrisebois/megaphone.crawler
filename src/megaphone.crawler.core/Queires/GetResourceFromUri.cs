@@ -1,9 +1,8 @@
 ﻿using Megaphone.Crawler.Core.Commands;
-using Megaphone.Crawler.Core.Extensions;
 using Megaphone.Crawler.Core.Models;
 using Megaphone.Crawler.Core.Services;
+using Megaphone.Standard.Extensions;
 using Megaphone.Standard.Queries;
-using System;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;

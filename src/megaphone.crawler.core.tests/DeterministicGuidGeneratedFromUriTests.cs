@@ -1,4 +1,4 @@
-﻿using Megaphone.Crawler.Core.Extensions;
+﻿using Megaphone.Standard.Extensions;
 using System;
 using Xunit;
 

@@ -1,7 +1,7 @@
 ﻿using CodeHollow.FeedReader;
-using Megaphone.Crawler.Core.Extensions;
 using Megaphone.Crawler.Core.Models;
 using Megaphone.Standard.Commands;
+using Megaphone.Standard.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
