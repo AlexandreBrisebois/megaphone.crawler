@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System.Net.Http;
 
 namespace megaphone.crawler
 {
@@ -29,8 +23,8 @@ namespace megaphone.crawler
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddSingleton<IWebResourceCrawler, WebResourceCrawler>();
-            services.AddControllers();
+            services.AddSingleton<IWebResourceCrawler>(new WebResourceCrawler(new RestService(new HttpClient())));
+            services.AddControllers().AddDapr();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "megaphone.crawler", Version = "v1" });
