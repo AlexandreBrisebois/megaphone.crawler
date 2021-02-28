@@ -1,10 +1,10 @@
 ﻿using Dapr.Client;
+using Megaphone.Crawler.Commands;
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Models;
 using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Controllers
@@ -29,20 +29,16 @@ namespace Megaphone.Crawler.Controllers
             if (message.Action == "crawl-request")
             {
                 var resource = await crawler.GetResourceAsync(message.Parameters["uri"]);
+                
                 SetValuesFromPatameters(message, resource);
 
-                await daprClient.InvokeMethodAsync(HttpMethod.Post,"resources", "api/resources", resource);
+                var postResource = new PostResourceCommand(resource);
+                await postResource.ApplyAsync(daprClient);
 
-                foreach(var r in resource.Resources)
+                foreach (var r in resource.Resources)
                 {
-                    var m = MessageBuilder.NewCommand("crawl-request")
-                                           .WithParameters("uri", r.Self.ToString())
-                                           .WithParameters("display", r.Display)
-                                           .WithParameters("description", r.Description)
-                                           .WithParameters("published", r.Published.ToString())
-                                           .Make();
-
-                    await daprClient.InvokeBindingAsync("crawl-requests", "create", m);
+                    var c = new SendCrawlRequestCommand(r);
+                    await c.ApplyAsync(daprClient);
                 }
             }
 
