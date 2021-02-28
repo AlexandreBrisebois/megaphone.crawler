@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<AssemblyName>Megaphone.Crawler.Core</AssemblyName>
 		<RootNamespace>Megaphone.Crawler.Core</RootNamespace>
 		<LangVersion>9.0</LangVersion>
@@ -11,7 +11,7 @@
 	<ItemGroup>
 		<PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
-		<PackageReference Include="Megaphone.Standard" Version="1.0.5" />
+		<PackageReference Include="Megaphone.Standard" Version="1.0.6" />
 	</ItemGroup>
 
 </Project>

@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<LangVersion>9.0</LangVersion>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
 		<AssemblyName>Megaphone.Crawler.Tests</AssemblyName>
 		<RootNamespace>Megaphone.Crawler.Tests</RootNamespace>
 	</PropertyGroup>
@@ -20,7 +18,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.25" />
 		<PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.25" />
-    <PackageReference Include="Megaphone.Standard" Version="1.0.5" />
+    <PackageReference Include="Megaphone.Standard" Version="1.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>

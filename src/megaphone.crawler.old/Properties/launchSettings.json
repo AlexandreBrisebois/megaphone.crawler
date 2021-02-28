@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "megaphone.crawler": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 33146,
+      "useSSL": false
+    }
+  }
+}

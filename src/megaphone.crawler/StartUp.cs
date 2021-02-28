@@ -1,23 +1,62 @@
-﻿using Megaphone.Crawler;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Services;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
-[assembly: WebJobsStartup(typeof(StartUp))]
-namespace Megaphone.Crawler
+namespace megaphone.crawler
 {
-    class StartUp : IWebJobsStartup
+    public class Startup
     {
-        public void Configure(IWebJobsBuilder builder)
+        public Startup(IConfiguration configuration)
         {
-            var httpClient = new HttpClient();
+            Configuration = configuration;
+        }
 
-            builder.Services.AddSingleton<IAppConfig,AppConfig>();
-            builder.Services.AddSingleton<IRestService>(new RestService(httpClient));
-            builder.Services.AddSingleton<IWebResourceCrawler, WebResourceCrawler>();
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddHttpClient();
+            services.AddSingleton<IWebResourceCrawler, WebResourceCrawler>();
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "megaphone.crawler", Version = "v1" });
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "megaphone.crawler v1"));
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

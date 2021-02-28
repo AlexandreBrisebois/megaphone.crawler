@@ -27,7 +27,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: '5.0.103'
         source-url: https://nuget.pkg.github.com/AlexandreBrisebois/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
