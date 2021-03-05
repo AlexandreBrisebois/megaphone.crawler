@@ -19,7 +19,7 @@ namespace Megaphone.Crawler.Queries
 
         public async Task<DateTimeOffset> ExecuteAsync(DaprClient model)
         {
-            var response = await model.InvokeMethodAsync<ResourceLastUpdateRepresentation>(HttpMethod.Head, "resources", $"api/resources/{id}");
+            var response = await model.InvokeMethodAsync<ResourceLastUpdateRepresentation>(HttpMethod.Get, "resources", $"api/resources/{id}/last-updated");
             return response.LastUpdated;
         }
     }
