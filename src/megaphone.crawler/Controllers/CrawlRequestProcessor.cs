@@ -7,6 +7,7 @@ using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Controllers
@@ -25,6 +26,27 @@ namespace Megaphone.Crawler.Controllers
             this.daprClient = daprClient;
         }
 
+        private async Task<bool> ShouldSkipCrawl(string uri)
+        {
+            var q = new GetResourceLastUpdateQuery(uri);
+            var resource = await q.ExecuteAsync(daprClient);
+
+            if (resource.LastUpdated == DateTimeOffset.MinValue)
+                return false;
+
+            if(resource.Type == ResourceType.Feed)
+            {
+                return false;
+            }
+
+            if(resource.LastUpdated.AddHours(4) > DateTimeOffset.UtcNow)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         [HttpPost("crawl-requests")]
         public async Task<IActionResult> PostAsync(CommandMessage message)
         {
@@ -32,11 +54,7 @@ namespace Megaphone.Crawler.Controllers
             {
                 string uri = message.Parameters["uri"];
 
-                var q = new GetResourceLastUpdateQuery(uri);
-                var lastUpdate = await q.ExecuteAsync(daprClient);
-
-                if (lastUpdate != DateTimeOffset.MinValue 
-                 && lastUpdate.AddHours(8) >= DateTimeOffset.UtcNow)
+                if (await ShouldSkipCrawl(uri))
                 {
                     return Ok();
                 }
