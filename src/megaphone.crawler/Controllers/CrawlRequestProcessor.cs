@@ -2,6 +2,7 @@
 using Megaphone.Crawler.Commands;
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Models;
+using Megaphone.Crawler.Queries;
 using Megaphone.Standard.Messages;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -29,10 +30,21 @@ namespace Megaphone.Crawler.Controllers
         {
             if (message.Action == "crawl-request")
             {
-                var resource = await crawler.GetResourceAsync(message.Parameters["uri"]);
+                string uri = message.Parameters["uri"];
+
+                var q = new GetResourceLastUpdateQuery(uri);
+                var lastUpdate = await q.ExecuteAsync(daprClient);
+
+                if (lastUpdate != DateTimeOffset.MinValue 
+                 && lastUpdate.AddHours(8) >= DateTimeOffset.UtcNow)
+                {
+                    return Ok();
+                }
+
+                var resource = await crawler.GetResourceAsync(uri);
 
                 if (Debugger.IsAttached)
-                    Console.WriteLine($"crawler : \"{resource.Display}\" : {message.Parameters["uri"]}");
+                    Console.WriteLine($"crawler : \"{resource.Display}\" : {uri}");
 
                 SetValuesFromPatameters(message, resource);
 
@@ -51,6 +63,9 @@ namespace Megaphone.Crawler.Controllers
                         Console.WriteLine($"request crawl : {r.Self}");
 
                 }
+
+                return Ok();
+
             }
 
             return Ok();
