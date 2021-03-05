@@ -1,20 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Megaphone.Crawler</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>8189bb40-f8c2-4c1e-900c-7a80077fb13b</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/dfbedef7-25e7-4450-8526-650ca03208ee/resourceGroups/ds1520plus/providers/microsoft.insights/components/ds1520plus-megaphone-app-insights</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapr.AspNetCore" Version="1.0.0" />
     <PackageReference Include="Megaphone.Standard" Version="1.0.7" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\megaphone.crawler.core\megaphone.crawler.core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\ServiceDependencies\local\" />
   </ItemGroup>
 
 </Project>
