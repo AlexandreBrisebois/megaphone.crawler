@@ -79,13 +79,10 @@ namespace Megaphone.Crawler.Controllers
 
                     if (Debugger.IsAttached)
                         Console.WriteLine($"request crawl : {r.Self}");
-
                 }
 
                 return Ok();
-
             }
-
             return Ok();
         }
 
