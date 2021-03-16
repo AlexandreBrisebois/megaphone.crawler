@@ -39,7 +39,7 @@ namespace Megaphone.Crawler.Controllers
                 return false;
             }
 
-            if(resource.LastUpdated.AddHours(4) > DateTimeOffset.UtcNow)
+            if(DateTimeOffset.UtcNow < resource.LastUpdated.AddHours(2))
             {
                 return false;
             }
