@@ -32,7 +32,14 @@ namespace megaphone.crawler.core.tests
             Assert.Equal(expectedResource.Type, resource.Type);
 
             if (resource.Type == ResourceType.Feed)
+            {
                 Assert.True(resource.Resources.Any());
+
+                foreach(var r in resource.Resources)
+                {
+                    Assert.NotEqual(r.Published.Date, DateTimeOffset.MinValue.Date);
+                }
+            }
         }
     }
 }

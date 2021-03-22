@@ -38,6 +38,16 @@ namespace megaphone.crawler.core.tests
                     IsActive = true,
                     Type = ResourceType.Feed
                 });
+            Add("https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-8440483452201197351&board=IntegrationsonAzureBlog&label=&messages=&size=10",
+                new Resource
+                {
+                    Id = "acd11391-c716-5d64-8d43-ed3f7d6843d4",
+                    Self = "https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-8440483452201197351&board=IntegrationsonAzureBlog&label=&messages=&size=10",
+                    Display = "Featured Blog",
+                    StatusCode = 200,
+                    IsActive = true,
+                    Type = ResourceType.Feed
+                });
         }
     }
 }
