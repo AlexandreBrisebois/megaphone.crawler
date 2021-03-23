@@ -99,7 +99,9 @@ namespace Megaphone.Crawler.Core.Commands
             { "ZP4", "+04:00" },
             { "ZP5", "+05:00" },
             { "ZP6", "+06:00" },
-            { "+0000", "-00:00" }
+            { "+0000", "-00:00" },
+            { "-0800", "-08:00" },
+            { "Z", "-00:00" }
         };
 
         public LoadFeedDetails(string content)
