@@ -130,13 +130,20 @@ namespace Megaphone.Crawler.Core.Commands
                 }
                 if (!string.IsNullOrEmpty(i.PublishingDateString))
                 {
-                    string dateString = i.PublishingDateString;
-                    int timeZonePos = dateString.LastIndexOf(' ') + 1;
-                    string tz = dateString.Substring(timeZonePos);
-                    dateString = dateString.Substring(0, dateString.Length - tz.Length);
-                    dateString += timeZoneOffsets[tz];
+                    if (DateTimeOffset.TryParse(i.PublishingDateString, out DateTimeOffset parsedDateTimeOffset))
+                    {
+                        published = parsedDateTimeOffset;
+                    }
+                    else
+                    {
+                        string dateString = i.PublishingDateString;
+                        int timeZonePos = dateString.LastIndexOf(' ') + 1;
+                        string tz = dateString.Substring(timeZonePos);
+                        dateString = dateString.Substring(0, dateString.Length - tz.Length);
+                        dateString += timeZoneOffsets[tz];
 
-                    published = DateTimeOffset.ParseExact(dateString, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture);
+                        published = DateTimeOffset.ParseExact(dateString, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture);
+                    }
                 }
 
                 var uri = i.Link;
