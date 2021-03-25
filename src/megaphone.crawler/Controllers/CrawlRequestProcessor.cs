@@ -39,7 +39,7 @@ namespace Megaphone.Crawler.Controllers
                 return false;
             }
 
-            if(DateTimeOffset.UtcNow > resource.LastUpdated.AddHours(2))
+            if(DateTimeOffset.UtcNow > resource.LastUpdated.AddMinutes(Convert.ToInt32(Environment.GetEnvironmentVariable("MINUTES-BETWEEN-CRAWLS"))))
             {
                 return false;
             }
