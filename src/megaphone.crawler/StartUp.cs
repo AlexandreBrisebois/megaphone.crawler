@@ -24,7 +24,9 @@ namespace megaphone.crawler
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddSingleton<IWebResourceCrawler>(new WebResourceCrawler(new RestService(new HttpClient())));
+            services.AddScoped<IRestService,RestService>();
+            services.AddScoped<IWebResourceCrawler, WebResourceCrawler>();
+
             services.AddControllers().AddDapr();
             services.AddSwaggerGen(c =>
             {
