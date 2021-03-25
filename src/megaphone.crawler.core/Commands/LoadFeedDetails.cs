@@ -1,4 +1,5 @@
 ﻿using CodeHollow.FeedReader;
+using CodeHollow.FeedReader.Feeds;
 using Megaphone.Crawler.Core.Models;
 using Megaphone.Standard.Commands;
 using Megaphone.Standard.Extensions;
@@ -128,7 +129,7 @@ namespace Megaphone.Crawler.Core.Commands
                 {
                     published = i.PublishingDate.GetValueOrDefault();
                 }
-                if (!string.IsNullOrEmpty(i.PublishingDateString))
+                else if (!string.IsNullOrEmpty(i.PublishingDateString))
                 {
                     if (DateTimeOffset.TryParse(i.PublishingDateString, out DateTimeOffset parsedDateTimeOffset))
                     {
@@ -144,6 +145,14 @@ namespace Megaphone.Crawler.Core.Commands
 
                         published = DateTimeOffset.ParseExact(dateString, "ddd, d MMM yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture);
                     }
+                }
+                else
+                {
+                    if (i.SpecificItem is AtomFeedItem item)
+                        if (DateTimeOffset.TryParse(item.UpdatedDateString, out DateTimeOffset parsedDateTimeOffset))
+                        {
+                            published = parsedDateTimeOffset;
+                        }
                 }
 
                 var uri = i.Link;
