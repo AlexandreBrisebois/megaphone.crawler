@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Megaphone.Crawler.Representations
 {
-    public class ResourceLastUpdateRepresentation : Representation
+    public class ResourceStatusRepresentation : Representation
     {
         [JsonPropertyName("is-active")]
         public bool IsActive { get; set; } = false;

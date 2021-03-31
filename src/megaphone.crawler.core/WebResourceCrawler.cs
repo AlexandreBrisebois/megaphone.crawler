@@ -1,7 +1,6 @@
 ﻿using Megaphone.Crawler.Core.Models;
 using Megaphone.Crawler.Core.Queires;
 using Megaphone.Crawler.Core.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Core

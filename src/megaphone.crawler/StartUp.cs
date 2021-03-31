@@ -1,5 +1,7 @@
 using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Services;
+using Megaphone.Crawler.Services;
+using Megaphone.Standard.Time;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,10 +26,17 @@ namespace megaphone.crawler
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
+            services.AddDaprClient();
+            
+            services.AddSingleton<ICrawlerQueueService, DaprCrawlerQueueService>();
+            services.AddSingleton<IResourceService, DaprResourceService>();
+            services.AddSingleton<IClock, UtcClock>();
+
             services.AddScoped<IRestService,RestService>();
             services.AddScoped<IWebResourceCrawler, WebResourceCrawler>();
 
             services.AddControllers().AddDapr();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "megaphone.crawler", Version = "v1" });
@@ -36,6 +45,8 @@ namespace megaphone.crawler
             string key = Environment.GetEnvironmentVariable("INSTRUMENTATION_KEY");
             if (!string.IsNullOrEmpty(key))
                 services.AddApplicationInsightsTelemetry(key);
+            else
+                services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

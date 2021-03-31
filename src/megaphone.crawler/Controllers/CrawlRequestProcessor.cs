@@ -1,45 +1,56 @@
-﻿using Dapr.Client;
-using Megaphone.Crawler.Commands;
-using Megaphone.Crawler.Core;
+﻿using Megaphone.Crawler.Core;
 using Megaphone.Crawler.Core.Models;
-using Megaphone.Crawler.Queries;
+using Megaphone.Crawler.Core.Services;
+using Megaphone.Crawler.Models;
 using Megaphone.Standard.Messages;
+using Megaphone.Standard.Time;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace Megaphone.Crawler.Controllers
 {
+
     [ApiController]
     [Route("/")]
     public class CrawlRequestProcessor : ControllerBase
     {
-        private readonly IWebResourceCrawler crawler;
-        private readonly DaprClient daprClient;
+        private readonly int interval;
 
-        public CrawlRequestProcessor([FromServices] IWebResourceCrawler crawler,
-                                     [FromServices] DaprClient daprClient)
+        private readonly TelemetryClient telemetryClient;
+        private readonly IResourceService resourceService;
+        private readonly IWebResourceCrawler crawler;
+        private readonly ICrawlerQueueService crawlerQueueService;
+        private readonly IClock clock;
+
+        public CrawlRequestProcessor(TelemetryClient telemetryClient,
+                                     [FromServices] IResourceService resourceService,
+                                     [FromServices] IWebResourceCrawler crawler,
+                                     [FromServices] ICrawlerQueueService crawlerQueueService,
+                                     [FromServices] IClock clock)
         {
+            this.interval = Convert.ToInt32(Environment.GetEnvironmentVariable("CRAWL-INTERVAL") ?? "120");
+           
+            this.telemetryClient = telemetryClient;
+            this.resourceService = resourceService;
             this.crawler = crawler;
-            this.daprClient = daprClient;
+            this.crawlerQueueService = crawlerQueueService;
+            this.clock = clock;
         }
 
         private async Task<bool> ShouldSkipCrawl(string uri)
         {
-            var q = new GetResourceLastUpdateQuery(uri);
-            var resource = await q.ExecuteAsync(daprClient);
 
-            if (resource.LastUpdated == DateTimeOffset.MinValue)
+            var resourceStatus = await resourceService.GetStatusAsync(uri);
+
+            if (resourceStatus.LastUpdated == DateTimeOffset.MinValue)
                 return false;
 
-            if(resource.Type == ResourceType.Feed)
-            {
+            if (resourceStatus.Type == ResourceType.Feed)
                 return false;
-            }
 
-            if(DateTimeOffset.UtcNow > resource.LastUpdated.AddMinutes(Convert.ToInt32(Environment.GetEnvironmentVariable("MINUTES-BETWEEN-CRAWLS"))))
+            if (clock.Now > resourceStatus.LastUpdated.AddMinutes(this.interval))
             {
                 return false;
             }
@@ -55,30 +66,18 @@ namespace Megaphone.Crawler.Controllers
                 string uri = message.Parameters["uri"];
 
                 if (await ShouldSkipCrawl(uri))
-                {
                     return Ok();
-                }
 
                 var resource = await crawler.GetResourceAsync(uri);
 
-                if (Debugger.IsAttached)
-                    Console.WriteLine($"crawler : \"{resource.Display}\" : {uri}");
-
                 SetValuesFromPatameters(message, resource);
 
-                var postResource = new PostResourceCommand(resource);
-                await postResource.ApplyAsync(daprClient);
-
-                if (Debugger.IsAttached)
-                    Console.WriteLine($"posted resource : \"{resource.Display}\"");
+                await this.resourceService.PostAsync(resource);
 
                 foreach (var r in resource.Resources)
                 {
-                    var c = new SendCrawlRequestCommand(r);
-                    await c.ApplyAsync(daprClient);
-
-                    if (Debugger.IsAttached)
-                        Console.WriteLine($"request crawl : {r.Self}");
+                    var cm = CommandMessageFactory.Make(r);
+                    await this.crawlerQueueService.Enqueue(cm);
                 }
 
                 return Ok();

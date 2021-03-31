@@ -37,6 +37,7 @@ namespace megaphone.crawler.core.tests
 
                 foreach(var r in resource.Resources)
                 {
+                    Assert.False(string.IsNullOrEmpty(r.Display));
                     Assert.NotEqual(r.Published.Date, DateTimeOffset.MinValue.Date);
                 }
             }
