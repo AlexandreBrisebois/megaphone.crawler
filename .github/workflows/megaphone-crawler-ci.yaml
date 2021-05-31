@@ -32,7 +32,7 @@ jobs:
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: build and test megaphone.crawler
-      uses: zyborg/dotnet-tests-report@v1.4.2
+      uses: zyborg/dotnet-tests-report@v1.4.3
       with:
           project_path: "./src/megaphone.crawler.tests/"
           report_name: "Megaphone Crawler Tests Results"
